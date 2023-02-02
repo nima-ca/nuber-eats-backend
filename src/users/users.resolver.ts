@@ -5,6 +5,7 @@ import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dto/create-user.input';
+import { LoginInput, LoginOutput } from './dto/Login.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -13,7 +14,16 @@ export class UsersResolver {
   @Mutation(() => CreateAccountOutput)
   async createAccount(@Args('input') createAccountInput: CreateAccountInput) {
     try {
-      return await this.usersService.createAccount(createAccountInput);
+      return this.usersService.createAccount(createAccountInput);
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  @Mutation(() => LoginOutput)
+  async login(@Args('input') loginInput: LoginInput) {
+    try {
+      return this.usersService.login(loginInput);
     } catch (error) {
       return { ok: false, error };
     }
@@ -22,20 +32,5 @@ export class UsersResolver {
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.usersService.findAll();
-  }
-
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.usersService.findOne(id);
-  }
-
-  // @Mutation(() => User)
-  // updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-  //   return this.usersService.update(updateUserInput.id, updateUserInput);
-  // }
-
-  @Mutation(() => User)
-  removeUser(@Args('id', { type: () => Int }) id: number) {
-    return this.usersService.remove(id);
   }
 }

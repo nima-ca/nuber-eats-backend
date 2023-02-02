@@ -4,10 +4,10 @@ import {
   InputType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entities';
 import { Entity, Column, BeforeInsert } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 
 enum UserRole {
@@ -24,20 +24,18 @@ registerEnumType(UserRole, { name: 'userRole' });
 export class User extends CoreEntity {
   @Column()
   @Field(() => String)
-  @IsNotEmpty()
   @IsEmail()
   email: string;
 
   @Column()
   @Field(() => String)
-  @IsNotEmpty()
   @IsString()
   @Length(8, 12)
   password: string;
 
   @Column({ type: 'enum', enum: UserRole })
   @Field(() => UserRole)
-  @IsNotEmpty()
+  @IsEnum(UserRole)
   role: UserRole;
 
   @BeforeInsert()
@@ -48,6 +46,17 @@ export class User extends CoreEntity {
       console.log(error);
       throw new InternalServerErrorException(
         'password is not hashed correctly!',
+      );
+    }
+  }
+
+  async checkPassword(inputPassword: string): Promise<boolean> {
+    try {
+      return await compare(inputPassword, this.password);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        "password matching method doesn't work correctly!",
       );
     }
   }
