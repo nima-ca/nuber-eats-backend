@@ -19,9 +19,7 @@ export class JwtMiddleware implements NestMiddleware {
       if (typeof payload === 'object' && payload.hasOwnProperty('id')) {
         req['user'] = await this.userService.findById(payload.id);
       }
-    } catch (error) {
-      throw new InternalServerErrorException('Authentication failed!');
-    }
+    } catch (error) {}
     next();
   }
 
