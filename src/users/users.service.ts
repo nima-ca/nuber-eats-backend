@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateAccountInput } from './dto/create-user.input';
-import { LoginInput } from './dto/Login.dto';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dto/create-user.input';
+import { LoginInput, LoginOutput } from './dto/Login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { userProfileOutput } from './dto/user-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +22,7 @@ export class UsersService {
     email,
     password,
     role,
-  }: CreateAccountInput): Promise<{ ok: boolean; error?: string }> {
+  }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
       const userExists = await this.userRepo.findOne({
         where: {
@@ -30,12 +34,11 @@ export class UsersService {
       await this.userRepo.save(this.userRepo.create({ email, password, role }));
       return { ok: true };
     } catch (error) {
-      console.log(error);
-      return { ok: false, error: "Couldn't create Account!" };
+      return { ok: false, error };
     }
   }
 
-  async login({ email, password }: LoginInput) {
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
     try {
       const user = await this.userRepo.findOne({ where: { email } });
       if (!user)
@@ -60,6 +63,24 @@ export class UsersService {
       return { ok: true, user };
     } catch (error) {
       return { ok: true, error };
+    }
+  }
+
+  async editProfile(
+    userId: number,
+    { email, password }: EditProfileInput,
+  ): Promise<EditProfileOutput> {
+    try {
+      const user = await this.findById(userId);
+      if (!user) return { ok: false, error: 'User not found!' };
+
+      if (email) user.email = email;
+      if (password) user.password = password;
+
+      await this.userRepo.save(user);
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
     }
   }
 
