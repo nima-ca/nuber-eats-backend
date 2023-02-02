@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dto/create-user.input';
 import { LoginInput } from './dto/Login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
+import { userProfileOutput } from './dto/user-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -52,9 +53,17 @@ export class UsersService {
     }
   }
 
+  async userProfile(id: number): Promise<userProfileOutput> {
+    try {
+      const user = await this.findById(id);
+      if (!user) return { ok: false, error: 'user not found!' };
+      return { ok: true, user };
+    } catch (error) {
+      return { ok: true, error };
+    }
+  }
+
   async findById(id: number): Promise<User> {
     return this.userRepo.findOne({ where: { id } });
   }
-
-  findAll() {}
 }

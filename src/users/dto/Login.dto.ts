@@ -1,10 +1,9 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { MutationOutputDto } from 'src/common/dto/output.dto';
+import { CoreOutput } from 'src/common/dto/output.dto';
 import { User } from '../entities/user.entity';
 
 @ObjectType()
-export class LoginOutput extends MutationOutputDto {
+export class LoginOutput extends CoreOutput {
   @Field(() => String, { nullable: true })
   token?: string;
 }
