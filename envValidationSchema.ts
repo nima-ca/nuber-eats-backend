@@ -7,5 +7,5 @@ export const envValidationSchema = {
   DB_USERNAME: joi.string().required(),
   DB_PASSWORD: joi.string().required(),
   DB_NAME: joi.string().required(),
-  JWT_SECRET_KEY: joi.string().required(),
+  SECRET_KEY: joi.string().required(),
 };

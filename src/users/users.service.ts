@@ -4,12 +4,13 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dto/create-user.input';
 import { LoginInput } from './dto/Login.dto';
-import * as JWT from 'jsonwebtoken';
+import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
@@ -44,7 +45,7 @@ export class UsersService {
 
       return {
         ok: true,
-        token: JWT.sign({ tole: user.role }, process.env.JWT_SECRET_KEY),
+        token: this.jwtService.sign({ id: user.id }),
       };
     } catch (error) {
       return { ok: false, error };
