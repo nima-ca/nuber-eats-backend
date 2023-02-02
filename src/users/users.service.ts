@@ -52,5 +52,9 @@ export class UsersService {
     }
   }
 
+  async findById(id: number): Promise<User> {
+    return this.userRepo.findOne({ where: { id } });
+  }
+
   findAll() {}
 }

@@ -23,4 +23,8 @@ export class JwtService {
       );
     }
   }
+
+  verify(token: string) {
+    return JWT.verify(token, this.options.secretKey);
+  }
 }
