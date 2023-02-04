@@ -4,7 +4,7 @@ import {
   InputType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entities';
 import { Entity, Column, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { hash, compare } from 'bcrypt';
@@ -27,7 +27,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field(() => String)
   @IsString()
   @Length(8, 12)
@@ -38,27 +38,18 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field(() => Boolean)
+  @IsBoolean()
+  verified: boolean;
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    try {
-      this.password = await hash(this.password, 10);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'password is not hashed correctly!',
-      );
-    }
+    if (this.password) this.password = await hash(this.password, 10);
   }
 
   async checkPassword(inputPassword: string): Promise<boolean> {
-    try {
-      return await compare(inputPassword, this.password);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        "password matching method doesn't work correctly!",
-      );
-    }
+    return await compare(inputPassword, this.password);
   }
 }
