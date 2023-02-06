@@ -24,6 +24,7 @@ export class UsersService {
     @InjectRepository(Verification)
     private readonly verificationRepo: Repository<Verification>,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async createAccount({
@@ -46,6 +47,7 @@ export class UsersService {
         this.verificationRepo.create({ user }),
       );
 
+      this.mailService.sendVerificationEmail(verification.code, [user.email]);
       return { ok: true };
     } catch (error) {
       return { ok: false, error };
@@ -88,10 +90,10 @@ export class UsersService {
     { email, password }: EditProfileInput,
   ): Promise<EditProfileOutput> {
     try {
-      const user = await this.findById(userId);
+      let user = await this.findById(userId);
       if (!user) return { ok: false, error: 'User not found!' };
 
-      if (email) user.email = email;
+      if (email) user = await this.changeUserEmail(user, email);
       if (password) user.password = password;
 
       await this.userRepo.save(user);
@@ -125,5 +127,20 @@ export class UsersService {
 
   async findById(id: number): Promise<User> {
     return this.userRepo.findOne({ where: { id } });
+  }
+
+  private async changeUserEmail(user: User, newEmail: string) {
+    user.email = newEmail;
+    user.verified = false;
+    await this.verificationRepo.delete({
+      user: {
+        id: user.id,
+      },
+    });
+    const verification = await this.verificationRepo.save(
+      this.verificationRepo.create({ user }),
+    );
+    this.mailService.sendVerificationEmail(verification.code, [user.email]);
+    return user;
   }
 }

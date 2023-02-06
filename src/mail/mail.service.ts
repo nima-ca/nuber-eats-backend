@@ -9,7 +9,7 @@ export class MailService {
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {}
 
-  async sendEmail(
+  private async sendEmail(
     receivers: string[],
     subject: string,
     text: string,
@@ -34,5 +34,14 @@ export class MailService {
       console.log(error);
       return false;
     }
+  }
+
+  async sendVerificationEmail(
+    code: string,
+    receivers: string[],
+  ): Promise<boolean> {
+    const subject = `Nuber Eats Verification Code!`;
+    const content = `Please confirm your account: ${code}`;
+    return await this.sendEmail(receivers, subject, content);
   }
 }
