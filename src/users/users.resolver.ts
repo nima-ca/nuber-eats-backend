@@ -21,14 +21,14 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => CreateAccountOutput)
-  async createAccount(
+  createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
     return this.usersService.createAccount(createAccountInput);
   }
 
   @Mutation(() => LoginOutput)
-  async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
+  login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);
   }
 
@@ -40,7 +40,7 @@ export class UsersResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => userProfileOutput)
-  async userProfile(
+  userProfile(
     @Args() { userId }: userProfileInput,
   ): Promise<userProfileOutput> {
     return this.usersService.userProfile(userId);
@@ -48,7 +48,7 @@ export class UsersResolver {
 
   @UseGuards(AuthGuard)
   @Mutation(() => EditProfileOutput)
-  async editProfile(
+  editProfile(
     @AuthUser() user: User,
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
@@ -56,7 +56,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => EmailVerificationOutput)
-  async verifyEmail(
+  verifyEmail(
     @Args('input') emailVerificationInput: EmailVerificationInput,
   ): Promise<EmailVerificationOutput> {
     return this.usersService.verifyEmail(emailVerificationInput);

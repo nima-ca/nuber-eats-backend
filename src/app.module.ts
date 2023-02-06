@@ -17,6 +17,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,7 +34,7 @@ import { Verification } from './users/entities/verification.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: process.env.NODE_ENV !== 'prod',
+      logging: false,
       entities: [User, Verification],
     }),
     GraphQLModule.forRoot({
@@ -45,6 +46,11 @@ import { Verification } from './users/entities/verification.entity';
     CommonModule,
     JwtModule.forRoot({ secretKey: process.env.SECRET_KEY }),
     AuthModule,
+    MailModule.forRoot({
+      pass: process.env.EMAIL_PASS,
+      service: process.env.EMAIL_SERVICE,
+      fromEmail: process.env.EMAIL_ACCOUNT,
+    }),
   ],
   controllers: [],
   providers: [],

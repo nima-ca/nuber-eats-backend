@@ -8,4 +8,7 @@ export const envValidationSchema = {
   DB_PASSWORD: joi.string().required(),
   DB_NAME: joi.string().required(),
   SECRET_KEY: joi.string().required(),
+  EMAIL_PASS: joi.string().required(),
+  EMAIL_SERVICE: joi.string().required(),
+  EMAIL_ACCOUNT: joi.string().required(),
 };

@@ -15,6 +15,7 @@ import {
   EmailVerificationInput,
   EmailVerificationOutput,
 } from './dto/email-verification.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -41,7 +42,10 @@ export class UsersService {
       );
 
       // create verification code
-      await this.verificationRepo.save(this.verificationRepo.create({ user }));
+      const verification = await this.verificationRepo.save(
+        this.verificationRepo.create({ user }),
+      );
+
       return { ok: true };
     } catch (error) {
       return { ok: false, error };

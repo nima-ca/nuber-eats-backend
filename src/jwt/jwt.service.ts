@@ -4,13 +4,13 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtModuleOptions } from './interface/jwt.interface';
-import { JWT_CONFIG_OPTIONS } from './jwt.constant';
 import * as JWT from 'jsonwebtoken';
+import { CONFIG_OPTIONS } from 'src/common/common.constatns';
 
 @Injectable()
 export class JwtService {
   constructor(
-    @Inject(JWT_CONFIG_OPTIONS) private readonly options: JwtModuleOptions,
+    @Inject(CONFIG_OPTIONS) private readonly options: JwtModuleOptions,
   ) {}
 
   sign(payload: Object): string {
