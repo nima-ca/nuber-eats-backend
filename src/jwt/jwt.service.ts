@@ -14,14 +14,7 @@ export class JwtService {
   ) {}
 
   sign(payload: Object): string {
-    try {
-      return JWT.sign(payload, this.options.secretKey);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'JWT Signing is not correctly working!',
-      );
-    }
+    return JWT.sign(payload, this.options.secretKey);
   }
 
   verify(token: string) {
