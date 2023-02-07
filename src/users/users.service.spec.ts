@@ -14,23 +14,25 @@ const mockRepo = () => ({
   create: jest.fn(),
 });
 
-const mockJWTService = {
+const mockJWTService = () => ({
   sign: jest.fn(),
   verify: jest.fn(),
-};
+});
 
-const mockMailService = {
+const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),
-};
+});
 
 type MockReposetory<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('UsersService', () => {
-  let uesrService: UsersService;
+  let userService: UsersService;
   let usersRepo: MockReposetory<User>;
   let verificationRepo: MockReposetory<Verification>;
   let mailService: MailService;
   let jwtService: JwtService;
+
+  const mockedEmail = 'test@example.com';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,16 +48,16 @@ describe('UsersService', () => {
         },
         {
           provide: JwtService,
-          useValue: mockJWTService,
+          useValue: mockJWTService(),
         },
         {
           provide: MailService,
-          useValue: mockMailService,
+          useValue: mockMailService(),
         },
       ],
     }).compile();
 
-    uesrService = module.get<UsersService>(UsersService);
+    userService = module.get<UsersService>(UsersService);
     usersRepo = module.get(getRepositoryToken(User));
     verificationRepo = module.get(getRepositoryToken(Verification));
     mailService = module.get<MailService>(MailService);
@@ -63,21 +65,21 @@ describe('UsersService', () => {
   });
 
   it('should be defined', () => {
-    expect(uesrService).toBeDefined();
+    expect(userService).toBeDefined();
   });
 
   describe('create account', () => {
+    const code = '1234';
+
     const createAccountArgs = {
-      email: 'test@example.com',
+      email: mockedEmail,
       password: '1234@abcd',
       role: 0,
     };
 
-    const code = '1234';
-
     it('should fail if user exist', async () => {
-      usersRepo.findOne.mockResolvedValue({ id: 1, email: 'test@example.com' });
-      const result = await uesrService.createAccount(createAccountArgs);
+      usersRepo.findOne.mockResolvedValue({ id: 1, email: mockedEmail });
+      const result = await userService.createAccount(createAccountArgs);
       expect(result.ok).toBeFalsy();
     });
 
@@ -86,7 +88,7 @@ describe('UsersService', () => {
       usersRepo.findOne.mockResolvedValue(undefined);
       usersRepo.create.mockReturnValue(createAccountArgs);
 
-      await uesrService.createAccount(createAccountArgs);
+      await userService.createAccount(createAccountArgs);
 
       // test user create method
       expect(usersRepo.create).toHaveBeenCalledTimes(1);
@@ -103,7 +105,7 @@ describe('UsersService', () => {
       usersRepo.save.mockReturnValue(createAccountArgs);
       verificationRepo.create.mockReturnValue({ user: createAccountArgs });
 
-      await uesrService.createAccount(createAccountArgs);
+      await userService.createAccount(createAccountArgs);
 
       // test verification create method
       expect(verificationRepo.create).toHaveBeenCalledTimes(1);
@@ -122,7 +124,7 @@ describe('UsersService', () => {
       usersRepo.save.mockResolvedValue(createAccountArgs);
       verificationRepo.save.mockResolvedValue({ code });
 
-      await uesrService.createAccount(createAccountArgs);
+      await userService.createAccount(createAccountArgs);
 
       expect(mailService.sendVerificationEmail).toBeCalledTimes(1);
       expect(mailService.sendVerificationEmail).toBeCalledWith(code, [
@@ -140,19 +142,19 @@ describe('UsersService', () => {
       verificationRepo.create.mockReturnValue({ user: createAccountArgs });
       verificationRepo.save.mockResolvedValue({ code });
 
-      const result = await uesrService.createAccount(createAccountArgs);
+      const result = await userService.createAccount(createAccountArgs);
       expect(result.ok).toBe(true);
     });
 
     it('should fail if there is any error', async () => {
       usersRepo.findOne.mockRejectedValue(new Error('A dummy error'));
-      const result = await uesrService.createAccount(createAccountArgs);
+      const result = await userService.createAccount(createAccountArgs);
       expect(result.ok).toBeFalsy();
     });
   });
 
   describe('login', () => {
-    const credentials = { email: 'test@example.com', password: '12345678' };
+    const credentials = { email: mockedEmail, password: '12345678' };
     const userId = 1;
 
     const mockedUser = {
@@ -162,7 +164,7 @@ describe('UsersService', () => {
 
     it("should fail if user doesn't exist", async () => {
       usersRepo.findOne.mockResolvedValue(undefined);
-      const result = await uesrService.login(credentials);
+      const result = await userService.login(credentials);
 
       expect(usersRepo.findOne).toBeCalledTimes(1);
       expect(usersRepo.findOne).toBeCalledWith({
@@ -175,7 +177,7 @@ describe('UsersService', () => {
     it('should fail if the password is Wrong', async () => {
       usersRepo.findOne.mockResolvedValue(mockedUser);
 
-      const result = await uesrService.login(credentials);
+      const result = await userService.login(credentials);
       expect(result.ok).toBeFalsy();
     });
 
@@ -183,7 +185,7 @@ describe('UsersService', () => {
       mockedUser.checkPassword = jest.fn(() => Promise.resolve(true));
       usersRepo.findOne.mockResolvedValue(mockedUser);
 
-      const result = await uesrService.login(credentials);
+      const result = await userService.login(credentials);
       expect(jwtService.sign).toBeCalledTimes(1);
       expect(jwtService.sign).toBeCalledWith({ id: userId });
       expect(result.ok).toBe(true);
@@ -191,7 +193,7 @@ describe('UsersService', () => {
 
     it('should fail if there was an error', async () => {
       usersRepo.findOne.mockRejectedValue(new Error());
-      const result = await uesrService.login(credentials);
+      const result = await userService.login(credentials);
       expect(result.ok).toBeFalsy();
     });
   });
@@ -201,19 +203,133 @@ describe('UsersService', () => {
 
     it('should return undefined if user is not found', async () => {
       usersRepo.findOne.mockResolvedValue(undefined);
-      const result = await uesrService.findById(id);
+      const result = await userService.findById(id);
       expect(result).toBeFalsy();
     });
 
     it('should return a user if found', async () => {
-      const mockedUser = { id, email: 'test@example.com' };
+      const mockedUser = { id, email: mockedEmail };
       usersRepo.findOne.mockResolvedValue(mockedUser);
 
-      const result = await uesrService.findById(id);
+      const result = await userService.findById(id);
 
       expect(usersRepo.findOne).toHaveBeenCalled();
       expect(usersRepo.findOne).toHaveBeenCalledWith({ where: { id } });
       expect(result).toEqual(mockedUser);
+    });
+  });
+
+  describe('editProfile', () => {
+    const userId = 1;
+    const mockedUser = { id: 1, email: mockedEmail, verified: true };
+    it('should fail if user does not exist', async () => {
+      const editArgs = { email: 'newEmail@gmail.com', password: '012345678' };
+      userService.findById = jest.fn(() => Promise.resolve(undefined));
+      const result = await userService.editProfile(userId, editArgs);
+      expect(userService.findById).toBeCalledTimes(1);
+      expect(result.ok).toBeFalsy();
+    });
+
+    it(`should change user's email if there is a email in arguments 
+    and send verification code for new email`, async () => {
+      const editArgs = {
+        email: 'newEmail@example.com',
+        password: '',
+      };
+      const newUser = {
+        id: 1,
+        email: editArgs.email,
+        verified: false,
+      };
+
+      const newVerification = {
+        code: '1234',
+      };
+
+      usersRepo.findOne = jest.fn(() => Promise.resolve(mockedUser));
+      verificationRepo.create = jest.fn(() => newVerification);
+      verificationRepo.save = jest.fn(() => Promise.resolve(newVerification));
+
+      const result = await userService.editProfile(userId, editArgs);
+
+      expect(verificationRepo.delete).toHaveBeenCalledTimes(1);
+      expect(verificationRepo.delete).toHaveBeenCalledWith({
+        user: {
+          id: mockedUser.id,
+        },
+      });
+      expect(verificationRepo.create).toHaveBeenCalledWith({ user: newUser });
+      expect(verificationRepo.save).toHaveBeenCalledWith(newVerification);
+      expect(mailService.sendVerificationEmail).toHaveBeenCalledWith(
+        newVerification.code,
+        [editArgs.email],
+      );
+
+      expect(usersRepo.save).toHaveBeenCalledWith(newUser);
+      expect(result.ok).toBe(true);
+    });
+
+    it('should change user password', async () => {
+      const editArgs = {
+        email: '',
+        password: '123456',
+      };
+
+      const newUser = {
+        ...mockedUser,
+        password: editArgs.password,
+      };
+
+      usersRepo.findOne = jest.fn(() => Promise.resolve(mockedUser));
+
+      const result = await userService.editProfile(userId, editArgs);
+
+      expect(usersRepo.save).toHaveBeenCalledWith(newUser);
+      expect(result.ok).toBe(true);
+    });
+  });
+
+  describe('verifyEmail', () => {
+    const verificationCode = {
+      code: 'code',
+    };
+
+    it('should fail on error', async () => {
+      usersRepo.findOne.mockRejectedValue(new Error());
+      const result = await userService.verifyEmail(verificationCode);
+      expect(result.ok).toBeFalsy();
+    });
+
+    it('should fail if no verification record is found', async () => {
+      usersRepo.findOne.mockResolvedValue(undefined);
+      const result = await userService.verifyEmail(verificationCode);
+      expect(verificationRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(verificationRepo.findOne).toHaveBeenCalledWith({
+        where: { ...verificationCode },
+        relations: { user: true },
+      });
+      expect(result.ok).toBeFalsy();
+    });
+
+    it('should change verified status of user to true and delete verification record', async () => {
+      const verificationId = 1;
+      const verification = {
+        id: verificationId,
+        ...verificationCode,
+        user: {
+          verified: false,
+        },
+      };
+
+      verificationRepo.findOne.mockResolvedValue(verification);
+      const result = await userService.verifyEmail(verificationCode);
+
+      expect(usersRepo.save).toHaveBeenCalledTimes(1);
+      expect(usersRepo.save).toHaveBeenCalledWith({ verified: true });
+
+      expect(verificationRepo.delete).toHaveBeenCalledTimes(1);
+      expect(verificationRepo.delete).toHaveBeenCalledWith(verificationId);
+      expect(result.ok).toBe(true);
     });
   });
 });

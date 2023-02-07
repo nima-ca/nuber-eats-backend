@@ -75,25 +75,28 @@ export class UsersService {
     }
   }
 
-  async userProfile(id: number): Promise<userProfileOutput> {
-    try {
-      const user = await this.findById(id);
-      if (!user) return { ok: false, error: 'user not found!' };
-      return { ok: true, user };
-    } catch (error) {
-      return { ok: true, error };
-    }
-  }
-
   async editProfile(
     userId: number,
     { email, password }: EditProfileInput,
   ): Promise<EditProfileOutput> {
     try {
-      let user = await this.findById(userId);
+      const user = await this.findById(userId);
       if (!user) return { ok: false, error: 'User not found!' };
 
-      if (email) user = await this.changeUserEmail(user, email);
+      if (email) {
+        user.email = email;
+        user.verified = false;
+        await this.verificationRepo.delete({
+          user: {
+            id: user.id,
+          },
+        });
+        const verification = await this.verificationRepo.save(
+          this.verificationRepo.create({ user }),
+        );
+        this.mailService.sendVerificationEmail(verification.code, [user.email]);
+      }
+
       if (password) user.password = password;
 
       await this.userRepo.save(user);
@@ -115,7 +118,7 @@ export class UsersService {
 
       // change user verified status
       verification.user.verified = true;
-      this.userRepo.save(verification.user);
+      await this.userRepo.save(verification.user);
 
       // delete verification record
       await this.verificationRepo.delete(verification.id);
@@ -127,20 +130,5 @@ export class UsersService {
 
   async findById(id: number): Promise<User> {
     return this.userRepo.findOne({ where: { id } });
-  }
-
-  private async changeUserEmail(user: User, newEmail: string) {
-    user.email = newEmail;
-    user.verified = false;
-    await this.verificationRepo.delete({
-      user: {
-        id: user.id,
-      },
-    });
-    const verification = await this.verificationRepo.save(
-      this.verificationRepo.create({ user }),
-    );
-    this.mailService.sendVerificationEmail(verification.code, [user.email]);
-    return user;
   }
 }
