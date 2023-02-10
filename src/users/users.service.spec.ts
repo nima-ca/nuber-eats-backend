@@ -230,6 +230,22 @@ describe('UsersService', () => {
       expect(result.ok).toBeFalsy();
     });
 
+    it('should fail if requested email is already in db', async () => {
+      const editArgs = { email: 'newEmail@gmail.com', password: '012345678' };
+
+      userService.findById = jest.fn().mockResolvedValue({ id: userId });
+      usersRepo.findOne.mockResolvedValue({ id: 2 });
+      const result = await userService.editProfile(userId, editArgs);
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toEqual(expect.any(String));
+
+      expect(usersRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepo.findOne).toHaveBeenCalledWith({
+        where: { email: editArgs.email },
+      });
+    });
+
     it(`should change user's email if there is a email in arguments 
     and send verification code for new email`, async () => {
       const editArgs = {
@@ -246,7 +262,7 @@ describe('UsersService', () => {
         code: '1234',
       };
 
-      usersRepo.findOne = jest.fn(() => Promise.resolve(mockedUser));
+      userService.findById = jest.fn().mockResolvedValue(mockedUser);
       verificationRepo.create = jest.fn(() => newVerification);
       verificationRepo.save = jest.fn(() => Promise.resolve(newVerification));
 
@@ -280,8 +296,7 @@ describe('UsersService', () => {
         password: editArgs.password,
       };
 
-      usersRepo.findOne = jest.fn(() => Promise.resolve(mockedUser));
-
+      userService.findById = jest.fn().mockResolvedValue(mockedUser);
       const result = await userService.editProfile(userId, editArgs);
 
       expect(usersRepo.save).toHaveBeenCalledWith(newUser);

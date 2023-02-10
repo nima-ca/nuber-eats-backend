@@ -2,11 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Verification } from 'src/users/entities/verification.entity';
 import * as JWT from 'jsonwebtoken';
 import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constatns';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({
@@ -35,6 +36,7 @@ const dataSource = new DataSource({
 
 describe('UserResolver (e2e)', () => {
   let app: INestApplication;
+  let verificationRepo: Repository<Verification>;
 
   // token is created in login test and shared with other tests!
   let jwtToken: string;
@@ -45,6 +47,10 @@ describe('UserResolver (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
+    verificationRepo = module.get<Repository<Verification>>(
+      getRepositoryToken(Verification),
+    );
+
     await app.init();
 
     // db connection to drop db later
@@ -207,6 +213,137 @@ describe('UserResolver (e2e)', () => {
       const me = response.body.data.me;
       expect(me.email).toBe(testUser.email);
       expect(me.id).toBe(testUser.id);
+    });
+  });
+
+  describe('editProfile', () => {
+    const DUMMY_EMAIL = 'dummyEmail@test.com';
+    it('should change email', async () => {
+      const response = await request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set(JWT_TOKEN_NAME_IN_REQ_HEADER, jwtToken)
+        .send({
+          query: `mutation {
+            editProfile(input:{
+              email: "${DUMMY_EMAIL}",
+            }){
+              ok
+              error
+            }
+          }`,
+        })
+        .expect(200);
+
+      const {
+        body: {
+          data: {
+            editProfile: { ok, error },
+          },
+        },
+      } = response;
+
+      expect(ok).toBe(true);
+      expect(error).toBeNull();
+    });
+
+    it('email should have been changed', async () => {
+      await request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set(JWT_TOKEN_NAME_IN_REQ_HEADER, jwtToken)
+        .send({
+          query: `{
+          me{
+            email
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.me.email).toBe(DUMMY_EMAIL);
+        });
+    });
+
+    it('should fail if user is not logged in', async () => {
+      const response = await request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation {
+          editProfile(input:{
+            email: "${DUMMY_EMAIL}",
+          }){
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200);
+
+      const {
+        body: { errors, data },
+      } = response;
+      expect(errors).toBeDefined();
+      expect(errors[0].message).toBe('Forbidden resource');
+      expect(data).toBeNull();
+    });
+  });
+
+  describe('verifyEmail', () => {
+    let verificationCode: string;
+    beforeEach(async () => {
+      const [verification] = await verificationRepo.find();
+      verificationCode = verification?.code;
+    });
+
+    it('should fail on wrong verification code', async () => {
+      await request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation {
+          verifyEmail(input: { code: "wrong verification code" }) {
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                verifyEmail: { ok, error },
+              },
+            },
+          } = res;
+
+          expect(ok).toBe(false);
+          expect(error).toEqual(expect.any(String));
+        });
+    });
+
+    it('should verify user', async () => {
+      await request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation {
+          verifyEmail(input: { code: "${verificationCode}" }) {
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                verifyEmail: { ok, error },
+              },
+            },
+          } = res;
+
+          expect(ok).toBe(true);
+          expect(error).toBeNull();
+        });
     });
   });
 });

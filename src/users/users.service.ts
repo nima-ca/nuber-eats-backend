@@ -8,7 +8,6 @@ import {
 } from './dto/create-user.input';
 import { LoginInput, LoginOutput } from './dto/Login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
-import { userProfileOutput } from './dto/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
 import {
@@ -84,6 +83,13 @@ export class UsersService {
       if (!user) return { ok: false, error: 'User not found!' };
 
       if (email) {
+        const userWithRequestedEmail = await this.userRepo.findOne({
+          where: { email },
+        });
+
+        if (userWithRequestedEmail)
+          return { ok: false, error: 'email is already registered!' };
+
         user.email = email;
         user.verified = false;
         await this.verificationRepo.delete({
