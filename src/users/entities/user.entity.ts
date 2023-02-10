@@ -8,7 +8,6 @@ import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entities';
 import { Entity, Column, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { hash, compare } from 'bcrypt';
-import { InternalServerErrorException } from '@nestjs/common';
 
 enum UserRole {
   Client,

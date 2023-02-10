@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import {
@@ -9,7 +9,6 @@ import { LoginInput, LoginOutput } from './dto/Login.dto';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { userProfileInput, userProfileOutput } from './dto/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 import {
   EmailVerificationInput,
@@ -36,14 +35,6 @@ export class UsersResolver {
   @Query(() => User)
   me(@AuthUser() user: User): User {
     return user;
-  }
-
-  @UseGuards(AuthGuard)
-  @Query(() => userProfileOutput)
-  userProfile(
-    @Args() { userId }: userProfileInput,
-  ): Promise<userProfileOutput> {
-    return this.usersService.userProfile(userId);
   }
 
   @UseGuards(AuthGuard)

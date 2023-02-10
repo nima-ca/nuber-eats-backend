@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common/decorators';
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from './jwt.service';
 import { UsersService } from 'src/users/users.service';
-
-const TOKEN_NAME = 'xsrf-token';
+import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constatns';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
@@ -24,8 +23,8 @@ export class JwtMiddleware implements NestMiddleware {
   }
 
   verifyToken(req: Request) {
-    if (TOKEN_NAME in req.headers) {
-      const token = req.headers[TOKEN_NAME];
+    if (JWT_TOKEN_NAME_IN_REQ_HEADER in req.headers) {
+      const token = req.headers[JWT_TOKEN_NAME_IN_REQ_HEADER];
       return this.jwtService.verify(token.toString());
     }
   }
