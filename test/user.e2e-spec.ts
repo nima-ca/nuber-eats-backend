@@ -41,6 +41,11 @@ describe('UserResolver (e2e)', () => {
   // token is created in login test and shared with other tests!
   let jwtToken: string;
 
+  const baseRequest = () => request(app.getHttpServer()).post(GRAPHQL_ENDPOINT);
+  const publicRequest = (query: string) => baseRequest().send({ query });
+  const privateRequest = (query: string) =>
+    baseRequest().set(JWT_TOKEN_NAME_IN_REQ_HEADER, jwtToken).send({ query });
+
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -65,35 +70,24 @@ describe('UserResolver (e2e)', () => {
 
   describe('createAccount', () => {
     it('should create account', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          createAccount(input:{email: "${testUser.email}", password: "${testUser.password}", role: Owner })
-          {
-            ok
-            error
-          }
-        }`,
-        })
-        .expect(200);
-
+      const response = await publicRequest(`mutation {
+        createAccount(input:{email: "${testUser.email}", password: "${testUser.password}", role: Owner })
+        {
+          ok
+          error
+        }
+      }`).expect(200);
       expect(response.body.data.createAccount.ok).toBe(true);
     });
 
     it('should fail if there is a user with same email', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          createAccount(input:{email: "${testUser.email}", password: "${testUser.password}", role: Owner })
-          {
-            ok
-            error
-          }
-        }`,
-        })
-        .expect(200);
+      const response = await publicRequest(`mutation {
+        createAccount(input:{email: "${testUser.email}", password: "${testUser.password}", role: Owner })
+        {
+          ok
+          error
+        }
+      }`).expect(200);
 
       expect(response.body.data.createAccount.ok).toBe(false);
       expect(response.body.data.createAccount.error).toEqual(
@@ -104,20 +98,15 @@ describe('UserResolver (e2e)', () => {
 
   describe('login', () => {
     it('should fail on wrong email', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          login(
-            input: { email: "wrongEmail@gmail.com", password: "${testUser.password}" }
-          ) {
-            ok
-            error,  
-            token
-          }
-        }`,
-        })
-        .expect(200);
+      const response = await publicRequest(`mutation {
+        login(
+          input: { email: "wrongEmail@gmail.com", password: "${testUser.password}" }
+        ) {
+          ok
+          error,  
+          token
+        }
+      }`).expect(200);
 
       const login = response.body.data.login;
       expect(login.ok).toBe(false);
@@ -126,20 +115,15 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('should fail on wrong password', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          login(
-            input: { email: "${testUser.email}", password: "wrongpassword" }
-          ) {
-            ok
-            error,  
-            token
-          }
-        }`,
-        })
-        .expect(200);
+      const response = await publicRequest(`mutation {
+        login(
+          input: { email: "${testUser.email}", password: "wrongpassword" }
+        ) {
+          ok
+          error,  
+          token
+        }
+      }`).expect(200);
 
       const login = response.body.data.login;
       expect(login.ok).toBe(false);
@@ -148,20 +132,15 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('should login with correct credentials', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          login(
-            input: { email: "${testUser.email}", password: "${testUser.password}" }
-          ) {
-            ok
-            error,  
-            token
-          }
-        }`,
-        })
-        .expect(200);
+      const response = await publicRequest(`mutation {
+        login(
+          input: { email: "${testUser.email}", password: "${testUser.password}" }
+        ) {
+          ok
+          error,  
+          token
+        }
+      }`).expect(200);
 
       const login = response.body.data.login;
       expect(login.ok).toBe(true);
@@ -177,16 +156,12 @@ describe('UserResolver (e2e)', () => {
 
   describe('me', () => {
     it('should fail if user is not logged in', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `{
-          me{
-            id
-            email
-          }
-        }`,
-        });
+      const response = await publicRequest(`{
+        me{
+          id
+          email
+        }
+      }`).expect(200);
 
       const {
         body: { errors, data },
@@ -197,18 +172,12 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('should return user object', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set(JWT_TOKEN_NAME_IN_REQ_HEADER, jwtToken)
-        .send({
-          query: `{
-          me{
-            id
-            email
-          }
-        }`,
-        })
-        .expect(200);
+      const response = await privateRequest(`{
+        me{
+          id
+          email
+        }
+      }`).expect(200);
 
       const me = response.body.data.me;
       expect(me.email).toBe(testUser.email);
@@ -219,20 +188,14 @@ describe('UserResolver (e2e)', () => {
   describe('editProfile', () => {
     const DUMMY_EMAIL = 'dummyEmail@test.com';
     it('should change email', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set(JWT_TOKEN_NAME_IN_REQ_HEADER, jwtToken)
-        .send({
-          query: `mutation {
-            editProfile(input:{
-              email: "${DUMMY_EMAIL}",
-            }){
-              ok
-              error
-            }
-          }`,
-        })
-        .expect(200);
+      const response = await privateRequest(`mutation {
+        editProfile(input:{
+          email: "${DUMMY_EMAIL}",
+        }){
+          ok
+          error
+        }
+      }`).expect(200);
 
       const {
         body: {
@@ -247,16 +210,11 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('email should have been changed', async () => {
-      await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set(JWT_TOKEN_NAME_IN_REQ_HEADER, jwtToken)
-        .send({
-          query: `{
-          me{
-            email
-          }
-        }`,
-        })
+      await privateRequest(`{
+        me{
+          email
+        }
+      }`)
         .expect(200)
         .expect((res) => {
           expect(res.body.data.me.email).toBe(DUMMY_EMAIL);
@@ -264,19 +222,14 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('should fail if user is not logged in', async () => {
-      const response = await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          editProfile(input:{
-            email: "${DUMMY_EMAIL}",
-          }){
-            ok
-            error
-          }
-        }`,
-        })
-        .expect(200);
+      const response = await publicRequest(`mutation {
+        editProfile(input:{
+          email: "${DUMMY_EMAIL}",
+        }){
+          ok
+          error
+        }
+      }`).expect(200);
 
       const {
         body: { errors, data },
@@ -295,16 +248,12 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('should fail on wrong verification code', async () => {
-      await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          verifyEmail(input: { code: "wrong verification code" }) {
-            ok
-            error
-          }
-        }`,
-        })
+      await publicRequest(`mutation {
+        verifyEmail(input: { code: "wrong verification code" }) {
+          ok
+          error
+        }
+      }`)
         .expect(200)
         .expect((res) => {
           const {
@@ -321,16 +270,12 @@ describe('UserResolver (e2e)', () => {
     });
 
     it('should verify user', async () => {
-      await request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation {
-          verifyEmail(input: { code: "${verificationCode}" }) {
-            ok
-            error
-          }
-        }`,
-        })
+      await publicRequest(`mutation {
+        verifyEmail(input: { code: "${verificationCode}" }) {
+          ok
+          error
+        }
+      }`)
         .expect(200)
         .expect((res) => {
           const {
