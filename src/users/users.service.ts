@@ -15,6 +15,7 @@ import {
   EmailVerificationOutput,
 } from './dto/email-verification.dto';
 import { MailService } from 'src/mail/mail.service';
+import { SUCCESSFUL_MESSAGE } from 'src/common/common.constatns';
 
 @Injectable()
 export class UsersService {
@@ -47,7 +48,7 @@ export class UsersService {
       );
 
       this.mailService.sendVerificationEmail(verification.code, [user.email]);
-      return { ok: true };
+      return SUCCESSFUL_MESSAGE;
     } catch (error) {
       return { ok: false, error };
     }
@@ -106,7 +107,7 @@ export class UsersService {
       if (password) user.password = password;
 
       await this.userRepo.save(user);
-      return { ok: true };
+      return SUCCESSFUL_MESSAGE;
     } catch (error) {
       return { ok: false, error };
     }
@@ -128,7 +129,7 @@ export class UsersService {
 
       // delete verification record
       await this.verificationRepo.delete(verification.id);
-      return { ok: true };
+      return SUCCESSFUL_MESSAGE;
     } catch (error) {
       return { ok: false, error };
     }
