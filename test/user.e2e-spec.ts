@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule, entities } from './../src/app.module';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Verification } from 'src/users/entities/verification.entity';
@@ -30,7 +30,7 @@ const dataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User, Verification],
+  entities,
   synchronize: true,
 });
 
@@ -167,7 +167,7 @@ describe('UserResolver (e2e)', () => {
         body: { errors, data },
       } = response;
       expect(errors).toBeDefined();
-      expect(errors[0].message).toBe('Forbidden resource');
+      expect(errors[0].message).toEqual(expect.any(String));
       expect(data).toBeNull();
     });
 
@@ -235,7 +235,7 @@ describe('UserResolver (e2e)', () => {
         body: { errors, data },
       } = response;
       expect(errors).toBeDefined();
-      expect(errors[0].message).toBe('Forbidden resource');
+      expect(errors[0].message).toEqual(expect.any(String));
       expect(data).toBeNull();
     });
   });

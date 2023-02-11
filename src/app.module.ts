@@ -21,6 +21,8 @@ import { MailModule } from './mail/mail.module';
 import { RestaurantModule } from './restaurants/restaurant.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entitiy';
+
+export const entities = [User, Verification, Restaurant, Category];
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,7 +40,7 @@ import { Category } from './restaurants/entities/category.entitiy';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: false,
-      entities: [User, Verification, Restaurant, Category],
+      entities,
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
