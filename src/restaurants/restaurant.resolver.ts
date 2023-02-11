@@ -9,6 +9,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { setRole } from 'src/auth/setRole.decorator';
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver {
@@ -16,6 +17,7 @@ export class RestaurantResolver {
 
   @UseGuards(AuthGuard)
   @Mutation(() => CreateRestaurantOutput)
+  @setRole(['Owner'])
   createRestaurant(
     @AuthUser() user: User,
     @Args('input') CreateRestaurantInput: CreateRestaurantInput,

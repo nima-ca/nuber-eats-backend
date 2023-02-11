@@ -47,6 +47,7 @@ import { Category } from './restaurants/entities/category.entitiy';
     }),
     UsersModule,
     CommonModule,
+    AuthModule,
     JwtModule.forRoot({ secretKey: process.env.SECRET_KEY }),
     AuthModule,
     MailModule.forRoot({

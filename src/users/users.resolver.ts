@@ -14,6 +14,7 @@ import {
   EmailVerificationInput,
   EmailVerificationOutput,
 } from './dto/email-verification.dto';
+import { setRole } from 'src/auth/setRole.decorator';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -31,13 +32,13 @@ export class UsersResolver {
     return this.usersService.login(loginInput);
   }
 
-  @UseGuards(AuthGuard)
+  @setRole(['Any'])
   @Query(() => User)
   me(@AuthUser() user: User): User {
     return user;
   }
 
-  @UseGuards(AuthGuard)
+  @setRole(['Any'])
   @Mutation(() => EditProfileOutput)
   editProfile(
     @AuthUser() user: User,
