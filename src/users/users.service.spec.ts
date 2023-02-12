@@ -5,14 +5,8 @@ import { User, UserRole } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
-import { Repository } from 'typeorm';
-
-const mockRepo = () => ({
-  save: jest.fn(),
-  findOne: jest.fn(),
-  delete: jest.fn(),
-  create: jest.fn(),
-});
+import { MockReposetory } from 'src/common/common.type';
+import { mockRepo } from 'src/common/common.constatns';
 
 const mockJWTService = () => ({
   sign: jest.fn(),
@@ -22,8 +16,6 @@ const mockJWTService = () => ({
 const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),
 });
-
-type MockReposetory<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('UsersService', () => {
   let userService: UsersService;
