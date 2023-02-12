@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@golevelup/ts-jest": "^0.3.4",
     "@nestjs/apollo": "^10.1.7",
     "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.0.0",

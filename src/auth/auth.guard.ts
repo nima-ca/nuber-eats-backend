@@ -27,10 +27,8 @@ export class AuthGuard implements CanActivate {
     // allow access to the resolver without a metadata
     if (!roles) return true;
 
-    const gqlContext = GqlExecutionContext.create(context).getContext();
-    const user: User = gqlContext['user'];
-
     // check if the user is authenticated
+    const user = this.getUser(context);
     if (!user) throw new UnauthorizedException('Please log into your account!');
 
     // let all the users access the resolver
@@ -43,5 +41,10 @@ export class AuthGuard implements CanActivate {
       );
 
     return true;
+  }
+
+  getUser(context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context).getContext();
+    return gqlContext['user'];
   }
 }
