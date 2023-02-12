@@ -1,16 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RestaurantService } from './restaurant.service';
-import { mockRepo } from 'src/common/common.constatns';
+import {
+  CATEGORY_IS_NOT_FOUND,
+  RESTAURANT_IS_NOT_FOUND,
+  RestaurantService,
+} from './restaurant.service';
+import { SUCCESSFUL_MESSAGE, mockRepo } from 'src/common/common.constatns';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { Category } from './entities/category.entitiy';
 import { MockReposetory } from 'src/common/common.type';
-import { User, UserRole } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 
 describe('Restaurant Service', () => {
   let service: RestaurantService;
   let restaurantRepo: MockReposetory<Restaurant>;
   let categoryRepo: MockReposetory<Category>;
+
+  const mockedUser = new User();
+  mockedUser.id = 1;
+
+  const mockedCategory = { id: 1 };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,11 +53,6 @@ describe('Restaurant Service', () => {
       categoryId: 1,
     };
 
-    const mockedUser = new User();
-    mockedUser.id = 1;
-
-    const mockedCategory = { id: 1 };
-
     it('should fail if category is not found', async () => {
       categoryRepo.findOne = jest.fn().mockResolvedValue(undefined);
       const result = await service.createRestaurant(
@@ -56,8 +60,7 @@ describe('Restaurant Service', () => {
         createRestaurantArgs,
       );
 
-      expect(result.ok).toBe(false);
-      expect(result.error).toEqual(expect.any(String));
+      expect(result).toEqual(CATEGORY_IS_NOT_FOUND);
       expect(categoryRepo.findOne).toHaveBeenCalledTimes(1);
       expect(categoryRepo.findOne).toHaveBeenCalledWith({
         where: { id: createRestaurantArgs.categoryId },
@@ -81,8 +84,7 @@ describe('Restaurant Service', () => {
         createRestaurantArgs,
       );
 
-      expect(result.ok).toBe(true);
-      expect(result.error).toBeFalsy();
+      expect(result).toEqual(SUCCESSFUL_MESSAGE);
 
       expect(restaurantRepo.create).toHaveBeenCalledTimes(1);
       expect(restaurantRepo.create).toHaveBeenCalledWith(mockedRestaurant);
@@ -104,7 +106,82 @@ describe('Restaurant Service', () => {
     });
   });
 
-  it.todo('Update Restaurant');
+  describe('Update Restaurant', () => {
+    const RESTAURANT_ID = 1;
+    const updateRestaurantArgs = {
+      restaurantId: RESTAURANT_ID,
+      name: 'KFC',
+    };
+
+    it('should fail if restaurant is not found', async () => {
+      service.findOneRestaurant = jest.fn().mockResolvedValue(undefined);
+      const result = await service.updateRestaurant(
+        mockedUser,
+        updateRestaurantArgs,
+      );
+
+      expect(result).toEqual(RESTAURANT_IS_NOT_FOUND);
+      expect(service.findOneRestaurant).toHaveBeenCalledTimes(1);
+      expect(service.findOneRestaurant).toHaveBeenCalledWith(
+        mockedUser.id,
+        RESTAURANT_ID,
+      );
+    });
+
+    it('should fail if there is a category in args and it is not found', async () => {
+      const mockedRestaurant = { id: RESTAURANT_ID };
+      service.findOneRestaurant = jest.fn().mockResolvedValue(mockedRestaurant);
+      categoryRepo.findOne = jest.fn().mockResolvedValue(undefined);
+
+      const CATEGORY_ID = 1;
+      const updateRestaurantArgsWithCategory = {
+        ...updateRestaurantArgs,
+        categoryId: CATEGORY_ID,
+      };
+
+      const result = await service.updateRestaurant(
+        mockedUser,
+        updateRestaurantArgsWithCategory,
+      );
+
+      expect(result).toEqual(CATEGORY_IS_NOT_FOUND);
+      expect(categoryRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(categoryRepo.findOne).toHaveBeenCalledWith({
+        where: { id: CATEGORY_ID },
+      });
+    });
+
+    it('should update restaurant', async () => {
+      const mockedRestaurant = { id: RESTAURANT_ID };
+      service.findOneRestaurant = jest.fn().mockResolvedValue(mockedRestaurant);
+
+      const result = await service.updateRestaurant(
+        mockedUser,
+        updateRestaurantArgs,
+      );
+
+      expect(result).toEqual(SUCCESSFUL_MESSAGE);
+      expect(restaurantRepo.update).toHaveBeenCalledTimes(1);
+
+      const { restaurantId, ...restArgs } = updateRestaurantArgs;
+      expect(restaurantRepo.update).toHaveBeenCalledWith(
+        restaurantId,
+        restArgs,
+      );
+    });
+
+    it('should fail on error', async () => {
+      service.findOneRestaurant = jest.fn().mockRejectedValue(new Error());
+      const result = await service.updateRestaurant(
+        mockedUser,
+        updateRestaurantArgs,
+      );
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toEqual(expect.any(Error));
+    });
+  });
+
   it.todo('Delete Restaurant');
   it.todo('FindOne Restaurant');
 });

@@ -18,9 +18,14 @@ import { Category } from './entities/category.entitiy';
 import { User } from 'src/users/entities/user.entity';
 import { SUCCESSFUL_MESSAGE } from 'src/common/common.constatns';
 
-const RESTAURANT_IS_NOT_FOUND = {
+export const RESTAURANT_IS_NOT_FOUND = {
   ok: false,
   error: 'Restaurant is not found!',
+};
+
+export const CATEGORY_IS_NOT_FOUND = {
+  ok: false,
+  error: 'Category is not found!',
 };
 
 @Injectable()
@@ -40,7 +45,7 @@ export class RestaurantService {
       const category = await this.categoryRepo.findOne({
         where: { id: categoryId },
       });
-      if (!category) return { ok: false, error: 'Category Not Found!' };
+      if (!category) return CATEGORY_IS_NOT_FOUND;
 
       await this.restaurantRepo.save(
         this.restaurantRepo.create({
@@ -63,6 +68,13 @@ export class RestaurantService {
     try {
       const restaurant = await this.findOneRestaurant(owner.id, restaurantId);
       if (!restaurant) return RESTAURANT_IS_NOT_FOUND;
+
+      if (updateRestaurantInput.categoryId) {
+        const category = await this.categoryRepo.findOne({
+          where: { id: updateRestaurantInput.categoryId },
+        });
+        if (!category) return CATEGORY_IS_NOT_FOUND;
+      }
 
       await this.restaurantRepo.update(restaurantId, {
         ...updateRestaurantInput,

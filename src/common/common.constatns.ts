@@ -7,4 +7,5 @@ export const mockRepo = () => ({
   findOne: jest.fn(),
   delete: jest.fn(),
   create: jest.fn(),
+  update: jest.fn(),
 });
