@@ -20,6 +20,7 @@ describe('Restaurant Service', () => {
   mockedUser.id = 1;
 
   const mockedCategory = { id: 1 };
+  const RESTAURANT_ID = 1;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -107,7 +108,6 @@ describe('Restaurant Service', () => {
   });
 
   describe('Update Restaurant', () => {
-    const RESTAURANT_ID = 1;
     const updateRestaurantArgs = {
       restaurantId: RESTAURANT_ID,
       name: 'KFC',
@@ -182,6 +182,80 @@ describe('Restaurant Service', () => {
     });
   });
 
-  it.todo('Delete Restaurant');
-  it.todo('FindOne Restaurant');
+  describe('Delete Restaurant', () => {
+    const deleteRestaurantArgs = { restaurantId: RESTAURANT_ID };
+
+    it('should fail if the restaurant is not found', async () => {
+      service.findOneRestaurant = jest.fn().mockResolvedValue(undefined);
+      const result = await service.updateRestaurant(
+        mockedUser,
+        deleteRestaurantArgs,
+      );
+
+      expect(result).toEqual(RESTAURANT_IS_NOT_FOUND);
+      expect(service.findOneRestaurant).toHaveBeenCalledTimes(1);
+      expect(service.findOneRestaurant).toHaveBeenCalledWith(
+        mockedUser.id,
+        RESTAURANT_ID,
+      );
+    });
+
+    it('should delete the restaurant', async () => {
+      const restaurant = { id: RESTAURANT_ID };
+      service.findOneRestaurant = jest.fn().mockResolvedValue(restaurant);
+      const result = await service.deleteRestaurant(
+        mockedUser,
+        deleteRestaurantArgs,
+      );
+
+      expect(result).toEqual(SUCCESSFUL_MESSAGE);
+      expect(restaurantRepo.delete).toHaveBeenCalledTimes(1);
+      expect(restaurantRepo.delete).toHaveBeenCalledWith(RESTAURANT_ID);
+    });
+
+    it('should fail on error', async () => {
+      service.findOneRestaurant = jest.fn().mockRejectedValue(new Error());
+      const result = await service.deleteRestaurant(
+        mockedUser,
+        deleteRestaurantArgs,
+      );
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toEqual(expect.any(Error));
+    });
+  });
+
+  describe('FindOne Restaurant', () => {
+    const restaurant = { id: RESTAURANT_ID };
+    it('should return undefined if restaurant is not found', async () => {
+      restaurantRepo.findOne = jest.fn().mockResolvedValue(undefined);
+
+      const result = await service.findOneRestaurant(
+        mockedUser.id,
+        restaurant.id,
+      );
+
+      expect(result).toBe(undefined);
+    });
+
+    it('should return a restaurant if found', async () => {
+      restaurantRepo.findOne = jest.fn().mockResolvedValue(restaurant);
+
+      const result = await service.findOneRestaurant(
+        mockedUser.id,
+        restaurant.id,
+      );
+
+      expect(result).toBe(restaurant);
+      expect(restaurantRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(restaurantRepo.findOne).toHaveBeenCalledWith({
+        where: {
+          id: restaurant.id,
+          owner: {
+            id: mockedUser.id,
+          },
+        },
+      });
+    });
+  });
 });
