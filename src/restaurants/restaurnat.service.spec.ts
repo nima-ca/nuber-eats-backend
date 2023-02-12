@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { RestaurantService } from './restaurant.service';
 import {
-  CATEGORY_IS_NOT_FOUND,
   RESTAURANT_IS_NOT_FOUND,
-  RestaurantService,
-} from './restaurant.service';
-import { SUCCESSFUL_MESSAGE, mockRepo } from 'src/common/common.constatns';
+  SUCCESSFUL_MESSAGE,
+  mockRepo,
+  CATEGORY_IS_NOT_FOUND,
+} from 'src/common/common.constatns';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { Category } from './entities/category.entitiy';

@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common/decorators';
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from './jwt.service';
 import { UsersService } from 'src/users/users.service';
-import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constatns';
+import {
+  JWT_TOKEN_NAME_IN_REQ_HEADER,
+  USER_KEY,
+} from 'src/common/common.constatns';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
@@ -16,7 +19,7 @@ export class JwtMiddleware implements NestMiddleware {
     try {
       const payload = this.verifyToken(req);
       if (typeof payload === 'object' && payload.hasOwnProperty('id')) {
-        req['user'] = await this.userService.findById(payload.id);
+        req[USER_KEY] = await this.userService.findById(payload.id);
       }
     } catch (error) {}
     next();

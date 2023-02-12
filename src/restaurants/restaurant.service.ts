@@ -16,17 +16,11 @@ import { Restaurant } from './entities/restaurant.entity';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entitiy';
 import { User } from 'src/users/entities/user.entity';
-import { SUCCESSFUL_MESSAGE } from 'src/common/common.constatns';
-
-export const RESTAURANT_IS_NOT_FOUND = {
-  ok: false,
-  error: 'Restaurant is not found!',
-};
-
-export const CATEGORY_IS_NOT_FOUND = {
-  ok: false,
-  error: 'Category is not found!',
-};
+import {
+  CATEGORY_IS_NOT_FOUND,
+  SUCCESSFUL_MESSAGE,
+  RESTAURANT_IS_NOT_FOUND,
+} from 'src/common/common.constatns';
 
 @Injectable()
 export class RestaurantService {

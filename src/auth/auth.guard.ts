@@ -8,9 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
-import { ROLE_METADATA_KEY } from 'src/common/common.constatns';
+import { ROLE_METADATA_KEY, USER_KEY } from 'src/common/common.constatns';
 import { AllowedRoles } from 'src/common/common.type';
-import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -45,6 +44,6 @@ export class AuthGuard implements CanActivate {
 
   getUser(context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context).getContext();
-    return gqlContext['user'];
+    return gqlContext[USER_KEY];
   }
 }
