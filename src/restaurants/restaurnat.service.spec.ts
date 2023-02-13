@@ -8,7 +8,7 @@ import {
 } from 'src/common/common.constatns';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
-import { Category } from './entities/category.entitiy';
+import { Category } from '../category/entity/category.entitiy';
 import { MockReposetory } from 'src/common/common.type';
 import { User } from 'src/users/entities/user.entity';
 

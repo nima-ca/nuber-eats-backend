@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entities';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { Category } from './category.entitiy';
+import { Category } from '../../category/entity/category.entitiy';
 import { User } from 'src/users/entities/user.entity';
 
 @InputType('RestaurantInputType', { isAbstract: true })

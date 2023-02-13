@@ -14,7 +14,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { Repository } from 'typeorm';
-import { Category } from './entities/category.entitiy';
+import { Category } from '../category/entity/category.entitiy';
 import { User } from 'src/users/entities/user.entity';
 import {
   CATEGORY_IS_NOT_FOUND,
