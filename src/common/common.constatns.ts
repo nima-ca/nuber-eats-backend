@@ -5,13 +5,6 @@ export const JWT_TOKEN_NAME_IN_REQ_HEADER = 'xsrf-token';
 export const ROLE_METADATA_KEY = 'ROLES';
 export const USER_KEY = 'user';
 export const SUCCESSFUL_MESSAGE: CoreOutput = { ok: true };
-export const mockRepo = () => ({
-  save: jest.fn(),
-  findOne: jest.fn(),
-  delete: jest.fn(),
-  create: jest.fn(),
-  update: jest.fn(),
-});
 
 export const RESTAURANT_IS_NOT_FOUND: CoreOutput = {
   ok: false,

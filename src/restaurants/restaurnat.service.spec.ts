@@ -3,7 +3,6 @@ import { RestaurantService } from './restaurant.service';
 import {
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
-  mockRepo,
   CATEGORY_IS_NOT_FOUND,
 } from 'src/common/common.constatns';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -11,6 +10,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { Category } from '../category/entity/category.entitiy';
 import { MockReposetory } from 'src/common/common.type';
 import { User } from 'src/users/entities/user.entity';
+import { mockRepo } from 'src/common/common.tools';
 
 describe('Restaurant Service', () => {
   let service: RestaurantService;
