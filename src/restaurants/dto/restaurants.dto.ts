@@ -4,9 +4,14 @@ import {
   PaginationOutput,
 } from 'src/common/dto/paginationdto';
 import { Restaurant } from '../entities/restaurant.entity';
+import { IsString } from 'class-validator';
 
 @InputType()
-export class RestaurantsInput extends PaginationInput {}
+export class RestaurantsInput extends PaginationInput {
+  @Field(() => String, { nullable: false })
+  @IsString()
+  query?: string;
+}
 
 @ObjectType()
 export class RestaurantsOutput extends PaginationOutput {

@@ -13,7 +13,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Category } from '../category/entity/category.entitiy';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -21,8 +21,9 @@ import {
   SUCCESSFUL_MESSAGE,
   RESTAURANT_IS_NOT_FOUND,
 } from 'src/common/common.constatns';
-import { RestaurantsInput, RestaurantsOutput } from './dto/all-restaurants.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dto/restaurants.dto';
 import { paginate, totalPages } from 'src/common/common.tools';
+import { RestaurantInput, RestaurantOutput } from './dto/restaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -113,10 +114,12 @@ export class RestaurantService {
   async allRestaurants({
     count,
     page,
+    query,
   }: RestaurantsInput): Promise<RestaurantsOutput> {
     try {
       const [restaurants, totalCounts] = await this.restaurantRepo.findAndCount(
         {
+          where: query ? { name: ILike(`%${query}%`) } : undefined,
           ...paginate({ count, page }),
         },
       );
@@ -125,6 +128,22 @@ export class RestaurantService {
         results: restaurants,
         totalPages: totalPages({ totalCounts, count }),
       };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async restaurant({
+    restaurantId,
+  }: RestaurantInput): Promise<RestaurantOutput> {
+    try {
+      const restaurant = await this.restaurantRepo.findOne({
+        where: { id: restaurantId },
+      });
+
+      return restaurant
+        ? { ok: true, restaurant }
+        : { ok: false, error: 'Restaurant is not found' };
     } catch (error) {
       return { ok: false, error };
     }
