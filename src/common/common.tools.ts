@@ -7,6 +7,8 @@ export const mockRepo = () => ({
   delete: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
+  findAndCount: jest.fn(),
+  count: jest.fn(),
 });
 
 export const paginate = ({ page, count }: PaginationInput) => ({

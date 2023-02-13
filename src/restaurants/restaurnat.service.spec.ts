@@ -11,6 +11,7 @@ import { Category } from '../category/entity/category.entitiy';
 import { MockReposetory } from 'src/common/common.type';
 import { User } from 'src/users/entities/user.entity';
 import { mockRepo } from 'src/common/common.tools';
+import { ILike } from 'typeorm';
 
 describe('Restaurant Service', () => {
   let service: RestaurantService;
@@ -257,6 +258,96 @@ describe('Restaurant Service', () => {
           },
         },
       });
+    });
+  });
+
+  describe('all restaurants', () => {
+    const PAGE = 1;
+    const COUNT = 10;
+    const restaurants = [
+      { id: 1, name: 'MC Donald' },
+      { id: 2, name: 'KFC' },
+    ];
+
+    it('should return all restaurants without query', async () => {
+      const allRestaurantsArgs = { page: PAGE, count: COUNT, query: '' };
+      restaurantRepo.findAndCount = jest
+        .fn()
+        .mockResolvedValue([restaurants, restaurants.length]);
+
+      const result = await service.allRestaurants(allRestaurantsArgs);
+
+      expect(result).toEqual({ ok: true, results: restaurants, totalPages: 1 });
+      expect(restaurantRepo.findAndCount).toHaveBeenCalledTimes(1);
+      expect(restaurantRepo.findAndCount).toHaveBeenCalledWith({
+        where: undefined,
+        take: COUNT,
+        skip: 0,
+      });
+    });
+
+    it('should return all restaurants without query', async () => {
+      const QUERY = 'mc donald';
+      const allRestaurantsArgs = { page: PAGE, count: COUNT, query: QUERY };
+      restaurantRepo.findAndCount = jest
+        .fn()
+        .mockResolvedValue([[restaurants[0]], 1]);
+
+      const result = await service.allRestaurants(allRestaurantsArgs);
+
+      expect(result).toEqual({
+        ok: true,
+        results: [restaurants[0]],
+        totalPages: 1,
+      });
+      expect(restaurantRepo.findAndCount).toHaveBeenCalledTimes(1);
+      expect(restaurantRepo.findAndCount).toHaveBeenCalledWith({
+        where: { name: ILike(`%${QUERY}%`) },
+        take: COUNT,
+        skip: 0,
+      });
+    });
+
+    it('should fail on error', async () => {
+      const allRestaurantsArgs = { page: PAGE, count: COUNT, query: '' };
+      restaurantRepo.findAndCount = jest.fn().mockRejectedValue(new Error());
+
+      const result = await service.allRestaurants(allRestaurantsArgs);
+      expect(result.ok).toBeFalsy();
+      expect(result.error).toEqual(expect.any(Error));
+    });
+  });
+
+  describe('restaurant', () => {
+    const restaurantArgs = { restaurantId: 1 };
+    it('should fail if the restaurant is not found', async () => {
+      restaurantRepo.findOne = jest.fn().mockResolvedValue(undefined);
+
+      const result = await service.restaurant(restaurantArgs);
+
+      expect(result.ok).toBeFalsy();
+      expect(result.error).toEqual(expect.any(String));
+      expect(restaurantRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(restaurantRepo.findOne).toHaveBeenCalledWith({
+        where: { id: restaurantArgs.restaurantId },
+      });
+    });
+
+    it('should return restaurant', async () => {
+      const restaurant = { id: 1 };
+      restaurantRepo.findOne = jest.fn().mockResolvedValue(restaurant);
+
+      const result = await service.restaurant(restaurantArgs);
+
+      expect(result).toEqual({ ok: true, restaurant });
+    });
+
+    it('should fail on error', async () => {
+      restaurantRepo.findOne = jest.fn().mockRejectedValue(new Error());
+      const result = await service.restaurant(restaurantArgs);
+
+      expect(result.ok).toBeFalsy();
+      expect(result.error).toEqual(expect.any(Error));
     });
   });
 });
