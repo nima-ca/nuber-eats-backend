@@ -330,6 +330,7 @@ describe('Restaurant Service', () => {
       expect(restaurantRepo.findOne).toHaveBeenCalledTimes(1);
       expect(restaurantRepo.findOne).toHaveBeenCalledWith({
         where: { id: restaurantArgs.restaurantId },
+        relations: ['menu'],
       });
     });
 

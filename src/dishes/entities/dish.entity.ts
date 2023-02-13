@@ -30,9 +30,26 @@ export class Dish extends CoreEntity {
   @Length(5, 200)
   description: string;
 
+  @Field(() => [DishOptions], { nullable: true })
+  @Column({ type: 'json', nullable: true })
+  options: DishOptions[];
+
   @Field(() => Restaurant)
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.menu, {
     onDelete: 'CASCADE',
   })
   restaurant: Restaurant;
+}
+
+@InputType('DishOptionsInputType', { isAbstract: true })
+@ObjectType()
+export class DishOptions {
+  @Field(() => String)
+  name: string;
+
+  @Field(() => Number)
+  extra: number;
+
+  @Field(() => [String])
+  choices: string[];
 }
