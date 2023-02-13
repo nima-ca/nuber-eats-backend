@@ -7,7 +7,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CategoryService } from './category.service';
-import { Category } from './entity/category.entitiy';
+import { Category } from './entity/category.entity';
 import { AllCategoriesOutput } from './dto/all-categories.dto';
 import { setRole } from 'src/auth/setRole.decorator';
 import { CategoryInput, CategoryOutput } from './dto/category.dto';

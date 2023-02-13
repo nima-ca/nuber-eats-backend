@@ -1,5 +1,5 @@
 import { totalPagesType } from './common.type';
-import { PaginationInput } from './dto/paginationdto';
+import { PaginationInput } from './dto/pagination.dto';
 
 export const mockRepo = () => ({
   save: jest.fn(),

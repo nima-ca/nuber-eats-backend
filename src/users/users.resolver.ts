@@ -1,10 +1,7 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import {
-  CreateAccountInput,
-  CreateAccountOutput,
-} from './dto/create-user.input';
+import { CreateAccountInput, CreateAccountOutput } from './dto/create-user.dto';
 import { LoginInput, LoginOutput } from './dto/Login.dto';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UseGuards } from '@nestjs/common';

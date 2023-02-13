@@ -76,6 +76,21 @@
     "typescript": "^4.7.4"
   },
   "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "test-config",
+      "interfaces",
+      "jestGlobalMocks.ts",
+      ".module.ts",
+      "<rootDir>/main.ts",
+      ".mock.ts",
+      ".decorator.ts",
+      ".dto.ts",
+      ".resolver.ts",
+      "envValidationSchema.ts",
+      ".entity.ts",
+      "common/"
+    ],
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"
     },
@@ -93,11 +108,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "node_modules",
-      ".entity.ts",
-      ".constants.ts"
-    ]
+    "testEnvironment": "node"
   }
 }

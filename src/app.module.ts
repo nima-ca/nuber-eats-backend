@@ -20,7 +20,7 @@ import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { RestaurantModule } from './restaurants/restaurant.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
-import { Category } from './category/entity/category.entitiy';
+import { Category } from './category/entity/category.entity';
 import { CategoryModule } from './category/category.module';
 
 export const entities = [User, Verification, Restaurant, Category];

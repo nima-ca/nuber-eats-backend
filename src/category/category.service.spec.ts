@@ -1,7 +1,7 @@
 import { MockReposetory } from 'src/common/common.type';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { RestaurantService } from 'src/restaurants/restaurant.service';
-import { Category } from './entity/category.entitiy';
+import { Category } from './entity/category.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';

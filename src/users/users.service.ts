@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import {
-  CreateAccountInput,
-  CreateAccountOutput,
-} from './dto/create-user.input';
+import { CreateAccountInput, CreateAccountOutput } from './dto/create-user.dto';
 import { LoginInput, LoginOutput } from './dto/Login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';

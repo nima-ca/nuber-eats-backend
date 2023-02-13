@@ -1,5 +1,5 @@
 import { CoreOutput } from 'src/common/dto/output.dto';
-import { Category } from '../entity/category.entitiy';
+import { Category } from '../entity/category.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()

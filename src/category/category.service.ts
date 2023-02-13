@@ -3,7 +3,7 @@ import { AllCategoriesOutput } from './dto/all-categories.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Repository } from 'typeorm';
-import { Category } from './entity/category.entitiy';
+import { Category } from './entity/category.entity';
 import { CategoryInput, CategoryOutput } from './dto/category.dto';
 import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constatns';
 import { paginate, totalPages } from 'src/common/common.tools';
