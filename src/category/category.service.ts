@@ -48,7 +48,7 @@ export class CategoryService {
         ok: true,
         category,
         restaurants,
-        totalPages: totalPages(totalCounts, count),
+        totalPages: totalPages({ totalCounts, count }),
       };
     } catch (error) {
       return { ok: false, error };

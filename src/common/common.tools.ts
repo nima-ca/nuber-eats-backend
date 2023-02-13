@@ -1,3 +1,4 @@
+import { totalPagesType } from './common.type';
 import { PaginationInput } from './dto/paginationdto';
 
 export const mockRepo = () => ({
@@ -13,5 +14,5 @@ export const paginate = ({ page, count }: PaginationInput) => ({
   skip: (page - 1) * count,
 });
 
-export const totalPages = (totalCounts: number, count: number): number =>
+export const totalPages = ({ count, totalCounts }: totalPagesType): number =>
   Math.ceil(totalCounts / count);

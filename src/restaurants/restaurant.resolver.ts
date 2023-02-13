@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RestaurantService } from './restaurant.service';
 import {
   CreateRestaurantInput,
@@ -16,6 +16,7 @@ import {
   DeleteRestaurantInput,
   DeleteRestaurantOutput,
 } from './dto/delete-restaurant.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dto/all-restaurants.dto';
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver {
@@ -46,5 +47,13 @@ export class RestaurantResolver {
     @Args('input') deleteRestaurantInput: DeleteRestaurantInput,
   ): Promise<DeleteRestaurantOutput> {
     return this.restaurantService.deleteRestaurant(user, deleteRestaurantInput);
+  }
+
+  @Query(() => RestaurantsOutput)
+  @setRole(['Any'])
+  allRestaurants(
+    @Args('input') restaurantsInput: RestaurantsInput,
+  ): Promise<RestaurantsOutput> {
+    return this.restaurantService.allRestaurants(restaurantsInput);
   }
 }

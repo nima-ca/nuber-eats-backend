@@ -21,6 +21,8 @@ import {
   SUCCESSFUL_MESSAGE,
   RESTAURANT_IS_NOT_FOUND,
 } from 'src/common/common.constatns';
+import { RestaurantsInput, RestaurantsOutput } from './dto/all-restaurants.dto';
+import { paginate, totalPages } from 'src/common/common.tools';
 
 @Injectable()
 export class RestaurantService {
@@ -106,5 +108,25 @@ export class RestaurantService {
         },
       },
     });
+  }
+
+  async allRestaurants({
+    count,
+    page,
+  }: RestaurantsInput): Promise<RestaurantsOutput> {
+    try {
+      const [restaurants, totalCounts] = await this.restaurantRepo.findAndCount(
+        {
+          ...paginate({ count, page }),
+        },
+      );
+      return {
+        ok: true,
+        results: restaurants,
+        totalPages: totalPages({ totalCounts, count }),
+      };
+    } catch (error) {
+      return { ok: false, error };
+    }
   }
 }
