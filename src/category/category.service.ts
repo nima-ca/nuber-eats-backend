@@ -23,7 +23,7 @@ export class CategoryService {
       const categories = await this.categoryRepo.find();
       return { ok: true, categories };
     } catch (error) {
-      return { ok: false, error, categories: [] };
+      return { ok: false, error };
     }
   }
 
