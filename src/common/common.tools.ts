@@ -11,6 +11,11 @@ export const mockRepo = () => ({
   count: jest.fn(),
 });
 
+export const mockJWTService = () => ({
+  sign: jest.fn(),
+  verify: jest.fn(),
+});
+
 export const paginate = ({ page, count }: PaginationInput) => ({
   take: count,
   skip: (page - 1) * count,

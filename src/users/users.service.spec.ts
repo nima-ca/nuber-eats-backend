@@ -6,12 +6,7 @@ import { Verification } from './entities/verification.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
 import { MockReposetory } from 'src/common/common.type';
-import { mockRepo } from 'src/common/common.tools';
-
-const mockJWTService = () => ({
-  sign: jest.fn(),
-  verify: jest.fn(),
-});
+import { mockJWTService, mockRepo } from 'src/common/common.tools';
 
 const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),
