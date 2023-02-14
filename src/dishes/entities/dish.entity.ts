@@ -51,6 +51,16 @@ export class DishOptions {
   @Field(() => Number, NULLABLE)
   extra?: number;
 
-  @Field(() => [String], NULLABLE)
-  choices?: string[];
+  @Field(() => [DishChoice], NULLABLE)
+  choices?: DishChoice[];
+}
+
+@InputType('DishChoiceInputType', { isAbstract: true })
+@ObjectType()
+export class DishChoice {
+  @Field(() => String)
+  name: string;
+
+  @Field(() => Number, NULLABLE)
+  extra?: number;
 }
