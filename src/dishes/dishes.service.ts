@@ -8,6 +8,7 @@ import {
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
 } from 'src/common/common.constatns';
+import { DeleteDishInput } from './dto/delete-dish.dto';
 
 @Injectable()
 export class DishesService {
@@ -36,6 +37,30 @@ export class DishesService {
       await this.dishRepo.save(
         this.dishRepo.create({ ...createDishInput, restaurant }),
       );
+
+      return SUCCESSFUL_MESSAGE;
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async deleteDish(
+    userId: number,
+    { dishId }: DeleteDishInput,
+  ): Promise<CreateDishOutput> {
+    try {
+      const dish = await this.dishRepo.findOne({
+        where: {
+          id: dishId,
+        },
+        relations: ['restaurant'],
+      });
+
+      if (!dish) return { ok: false, error: 'Dish is not found!' };
+      if (dish.restaurant.ownerId !== userId)
+        return { ok: false, error: 'You are not allowed to do this action!' };
+
+      await this.dishRepo.delete(dishId);
 
       return SUCCESSFUL_MESSAGE;
     } catch (error) {

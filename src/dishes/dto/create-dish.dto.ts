@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
-import { Dish, DishOptions } from '../entities/dish.entity';
+import { Dish } from '../entities/dish.entity';
 import { CoreOutput } from 'src/common/dto/output.dto';
 
 @InputType()
