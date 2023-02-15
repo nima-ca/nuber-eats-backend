@@ -24,8 +24,10 @@ import { Category } from './category/entity/category.entity';
 import { CategoryModule } from './category/category.module';
 import { DishesModule } from './dishes/dishes.module';
 import { Dish } from './dishes/entities/dish.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
 
-export const entities = [User, Verification, Restaurant, Category, Dish];
+export const entities = [User, Verification, Restaurant, Category, Dish, Order];
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -63,6 +65,7 @@ export const entities = [User, Verification, Restaurant, Category, Dish];
     RestaurantModule,
     CategoryModule,
     DishesModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],
