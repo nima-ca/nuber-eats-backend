@@ -2,14 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DISH_IS_NOT_FOUND,
+  ORDER_IS_NOT_FOUND,
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
 } from 'src/common/common.constants';
 import { Dish } from 'src/dishes/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User, UserRole } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderInput, CreateOrderOutput } from './dto/create-order.dto';
+import {
+  GetOrderByIdOutput,
+  GetOrdersInput,
+  GetOrdersOutput,
+} from './dto/get-order.dto';
 import { OrderItem } from './entities/order-item.entity';
 import { Order } from './entities/order.entity';
 
@@ -71,8 +77,61 @@ export class OrdersService {
         );
         orderItems.push(orderItem);
       }
-      await this.orderRepo.save(this.orderRepo.create({}));
+      await this.orderRepo.save(
+        this.orderRepo.create({
+          customer,
+          restaurant,
+          total: orderFinalPrice,
+          item: orderItems,
+        }),
+      );
       return SUCCESSFUL_MESSAGE;
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async getOrders(
+    user: User,
+    { status }: GetOrdersInput,
+  ): Promise<GetOrdersOutput> {
+    try {
+      const orders = await this.orderRepo.find({
+        where: {
+          ...(status && { status }),
+          ...(user.role === UserRole.Delivery && { driver: { id: user.id } }),
+          ...(user.role === UserRole.Client && { customer: { id: user.id } }),
+          ...(user.role === UserRole.Owner && {
+            restaurant: { owner: { id: user.id } },
+          }),
+        },
+      });
+
+      return { ok: true, orders };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async getOrderById(user: User, orderId: number): Promise<GetOrderByIdOutput> {
+    try {
+      const order = await this.orderRepo.findOne({
+        where: {
+          id: orderId,
+          ...(user.role === UserRole.Delivery && { driver: { id: user.id } }),
+          ...(user.role === UserRole.Client && { customer: { id: user.id } }),
+          ...(user.role === UserRole.Owner && {
+            restaurant: { owner: { id: user.id } },
+          }),
+        },
+      });
+      if (!order) return ORDER_IS_NOT_FOUND;
+      console.log(order);
+
+      return {
+        ok: true,
+        order,
+      };
     } catch (error) {
       return { ok: false, error };
     }

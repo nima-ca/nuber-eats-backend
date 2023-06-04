@@ -15,9 +15,15 @@ export const CATEGORY_IS_NOT_FOUND: CoreOutput = {
   ok: false,
   error: 'Category is not found!',
 };
+
 export const DISH_IS_NOT_FOUND: CoreOutput = {
   ok: false,
   error: 'Dish is not found!',
+};
+
+export const ORDER_IS_NOT_FOUND: CoreOutput = {
+  ok: false,
+  error: 'Order is not found!',
 };
 
 export const NULLABLE = { nullable: true };
