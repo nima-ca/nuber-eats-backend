@@ -7,7 +7,7 @@ import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import {
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
-} from 'src/common/common.constatns';
+} from 'src/common/common.constants';
 import { DeleteDishInput, DeleteDishOutput } from './dto/delete-dish.dto';
 import { EditDishInput, EditDishOutput } from './dto/edit-dish.dto';
 

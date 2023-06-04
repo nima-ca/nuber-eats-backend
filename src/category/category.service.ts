@@ -5,7 +5,7 @@ import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Repository } from 'typeorm';
 import { Category } from './entity/category.entity';
 import { CategoryInput, CategoryOutput } from './dto/category.dto';
-import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constatns';
+import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constants';
 import { paginate, totalPages } from 'src/common/common.tools';
 
 @Injectable()

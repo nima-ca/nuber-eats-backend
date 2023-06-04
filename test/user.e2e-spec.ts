@@ -6,7 +6,7 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Verification } from 'src/users/entities/verification.entity';
 import * as JWT from 'jsonwebtoken';
-import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constatns';
+import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constants';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 jest.mock('nodemailer', () => ({

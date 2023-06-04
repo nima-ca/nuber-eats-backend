@@ -1,6 +1,6 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { USER_KEY } from 'src/common/common.constatns';
+import { USER_KEY } from 'src/common/common.constants';
 
 export const AuthUser = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {

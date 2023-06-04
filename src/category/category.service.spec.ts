@@ -7,7 +7,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { mockRepo, paginate, totalPages } from 'src/common/common.tools';
 import { CategoryService } from './category.service';
-import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constatns';
+import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constants';
 
 describe('Category Service', () => {
   let service: CategoryService;

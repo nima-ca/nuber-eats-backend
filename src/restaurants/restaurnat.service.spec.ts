@@ -4,7 +4,7 @@ import {
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
   CATEGORY_IS_NOT_FOUND,
-} from 'src/common/common.constatns';
+} from 'src/common/common.constants';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { Category } from '../category/entity/category.entity';

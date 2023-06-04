@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from './jwt.service';
-import { CONFIG_OPTIONS } from 'src/common/common.constatns';
+import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import * as JWT from 'jsonwebtoken';
 
 const TEST_SECRET_KEY = 'test-secret-key';

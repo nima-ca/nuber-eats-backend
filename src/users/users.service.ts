@@ -12,7 +12,7 @@ import {
   EmailVerificationOutput,
 } from './dto/email-verification.dto';
 import { MailService } from 'src/mail/mail.service';
-import { SUCCESSFUL_MESSAGE } from 'src/common/common.constatns';
+import { SUCCESSFUL_MESSAGE } from 'src/common/common.constants';
 
 @Injectable()
 export class UsersService {

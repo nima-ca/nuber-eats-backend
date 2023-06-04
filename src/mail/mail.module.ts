@@ -1,6 +1,6 @@
 import { Module, DynamicModule, Global } from '@nestjs/common';
 import { MailModuleOptions } from './mail.interface';
-import { CONFIG_OPTIONS } from 'src/common/common.constatns';
+import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { MailService } from './mail.service';
 import { HttpModule } from '@nestjs/axios';
 

@@ -2,7 +2,7 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { JwtService } from './jwt.service';
 import { Global } from '@nestjs/common/decorators';
 import { JwtModuleOptions } from './interface/jwt.interface';
-import { CONFIG_OPTIONS } from 'src/common/common.constatns';
+import { CONFIG_OPTIONS } from 'src/common/common.constants';
 
 @Global()
 @Module({})

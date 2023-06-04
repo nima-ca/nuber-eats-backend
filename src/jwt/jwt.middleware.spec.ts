@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtMiddleware } from './jwt.middleware';
-import { JwtService } from './jwt.service';
+import { Request, Response } from 'express';
 import { mockJWTService } from 'src/common/common.tools';
 import { UsersService } from 'src/users/users.service';
-import { NextFunction, Request, Response } from 'express';
-import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constatns';
+import { JwtMiddleware } from './jwt.middleware';
+import { JwtService } from './jwt.service';
 const mockUsersService = () => ({
   findById: jest.fn(),
 });

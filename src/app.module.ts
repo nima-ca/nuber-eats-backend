@@ -26,8 +26,17 @@ import { DishesModule } from './dishes/dishes.module';
 import { Dish } from './dishes/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
 
-export const entities = [User, Verification, Restaurant, Category, Dish, Order];
+export const entities = [
+  User,
+  Verification,
+  Restaurant,
+  Category,
+  Dish,
+  Order,
+  OrderItem,
+];
 @Module({
   imports: [
     ConfigModule.forRoot({

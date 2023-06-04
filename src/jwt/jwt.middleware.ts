@@ -1,12 +1,12 @@
-import { InternalServerErrorException, NestMiddleware } from '@nestjs/common';
+import { NestMiddleware } from '@nestjs/common';
 import { Injectable } from '@nestjs/common/decorators';
 import { NextFunction, Request, Response } from 'express';
-import { JwtService } from './jwt.service';
-import { UsersService } from 'src/users/users.service';
 import {
   JWT_TOKEN_NAME_IN_REQ_HEADER,
   USER_KEY,
-} from 'src/common/common.constatns';
+} from 'src/common/common.constants';
+import { UsersService } from 'src/users/users.service';
+import { JwtService } from './jwt.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {

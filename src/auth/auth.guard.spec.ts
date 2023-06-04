@@ -8,7 +8,7 @@ import { AuthGuard } from './auth.guard';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Reflector } from '@nestjs/core';
 import { AllowedRoles } from 'src/common/common.type';
-import { ROLE_METADATA_KEY } from 'src/common/common.constatns';
+import { ROLE_METADATA_KEY } from 'src/common/common.constants';
 
 const mockReflector = () => ({
   get: jest.fn((metadataKey: string, target: Function): AllowedRoles[] => []),

@@ -23,3 +23,7 @@ export const paginate = ({ page, count }: PaginationInput) => ({
 
 export const totalPages = ({ count, totalCounts }: totalPagesType): number =>
   Math.ceil(totalCounts / count);
+
+export const sumUp = (numbers: number[]): number => {
+  return numbers.reduce((a, b) => a + b, 0);
+};

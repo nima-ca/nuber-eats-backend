@@ -20,7 +20,7 @@ import {
   CATEGORY_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
   RESTAURANT_IS_NOT_FOUND,
-} from 'src/common/common.constatns';
+} from 'src/common/common.constants';
 import { RestaurantsInput, RestaurantsOutput } from './dto/restaurants.dto';
 import { paginate, totalPages } from 'src/common/common.tools';
 import { RestaurantInput, RestaurantOutput } from './dto/restaurant.dto';

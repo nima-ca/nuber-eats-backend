@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
-import { ROLE_METADATA_KEY, USER_KEY } from 'src/common/common.constatns';
+import { ROLE_METADATA_KEY, USER_KEY } from 'src/common/common.constants';
 import { AllowedRoles } from 'src/common/common.type';
 
 @Injectable()
