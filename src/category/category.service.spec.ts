@@ -1,13 +1,11 @@
-import { MockReposetory } from 'src/common/common.type';
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
-import { RestaurantService } from 'src/restaurants/restaurant.service';
-import { Category } from './entity/category.entity';
-import { User } from 'src/users/entities/user.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { mockRepo, paginate, totalPages } from 'src/common/common.tools';
-import { CategoryService } from './category.service';
 import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constants';
+import { mockRepo } from 'src/common/common.tools';
+import { MockReposetory } from 'src/common/common.type';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { CategoryService } from './category.service';
+import { Category } from './entity/category.entity';
 
 describe('Category Service', () => {
   let service: CategoryService;

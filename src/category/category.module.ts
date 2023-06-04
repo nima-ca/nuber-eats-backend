@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CategoryService } from './category.service';
-import { CategoryResolver } from './category.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { CategoryResolver } from './category.resolver';
+import { CategoryService } from './category.service';
 import { Category } from './entity/category.entity';
 
 @Module({

@@ -6,11 +6,11 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { CategoryService } from './category.service';
-import { Category } from './entity/category.entity';
-import { AllCategoriesOutput } from './dto/all-categories.dto';
 import { setRole } from 'src/auth/setRole.decorator';
+import { CategoryService } from './category.service';
+import { AllCategoriesOutput } from './dto/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dto/category.dto';
+import { Category } from './entity/category.entity';
 
 @Resolver(() => Category)
 export class CategoryResolver {

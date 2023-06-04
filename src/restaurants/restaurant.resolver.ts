@@ -1,23 +1,23 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { RestaurantService } from './restaurant.service';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { setRole } from 'src/auth/setRole.decorator';
+import { User } from 'src/users/entities/user.entity';
 import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dto/create-restaurant.dto';
-import { Restaurant } from './entities/restaurant.entity';
-import { AuthUser } from 'src/auth/auth-user.decorator';
-import { User } from 'src/users/entities/user.entity';
-import { setRole } from 'src/auth/setRole.decorator';
-import {
-  UpdateRestaurantInput,
-  UpdateRestaurantOutput,
-} from './dto/update-restaurant.dto';
 import {
   DeleteRestaurantInput,
   DeleteRestaurantOutput,
 } from './dto/delete-restaurant.dto';
-import { RestaurantsInput, RestaurantsOutput } from './dto/restaurants.dto';
 import { RestaurantInput, RestaurantOutput } from './dto/restaurant.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dto/restaurants.dto';
+import {
+  UpdateRestaurantInput,
+  UpdateRestaurantOutput,
+} from './dto/update-restaurant.dto';
+import { Restaurant } from './entities/restaurant.entity';
+import { RestaurantService } from './restaurant.service';
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver {

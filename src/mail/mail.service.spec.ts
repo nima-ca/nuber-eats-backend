@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MailService } from './mail.service';
-import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import * as nodemailer from 'nodemailer';
+import { CONFIG_OPTIONS } from 'src/common/common.constants';
+import { MailService } from './mail.service';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({

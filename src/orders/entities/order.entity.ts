@@ -1,24 +1,16 @@
 import {
+  Field,
   InputType,
   ObjectType,
-  Field,
   registerEnumType,
 } from '@nestjs/graphql';
+import { IsEnum, IsNumber } from 'class-validator';
 import { NULLABLE } from 'src/common/common.constants';
 import { CoreEntity } from 'src/common/entities/core.entities';
-import { Dish } from 'src/dishes/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Entity,
-  Column,
-  ManyToMany,
-  ManyToOne,
-  JoinTable,
-  RelationId,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { OrderItem } from './order-item.entity';
-import { IsEnum, IsNumber } from 'class-validator';
 
 export enum OrderStatus {
   Pending = 'Pending',

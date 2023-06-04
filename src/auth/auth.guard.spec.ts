@@ -1,14 +1,14 @@
 import { createMock } from '@golevelup/ts-jest';
 import {
   ExecutionContext,
-  UnauthorizedException,
   ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
-import { Test, TestingModule } from '@nestjs/testing';
 import { Reflector } from '@nestjs/core';
-import { AllowedRoles } from 'src/common/common.type';
+import { Test, TestingModule } from '@nestjs/testing';
 import { ROLE_METADATA_KEY } from 'src/common/common.constants';
+import { AllowedRoles } from 'src/common/common.type';
+import { AuthGuard } from './auth.guard';
 
 const mockReflector = () => ({
   get: jest.fn((metadataKey: string, target: Function): AllowedRoles[] => []),

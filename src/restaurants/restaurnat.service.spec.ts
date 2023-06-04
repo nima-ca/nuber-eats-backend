@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RestaurantService } from './restaurant.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import {
+  CATEGORY_IS_NOT_FOUND,
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
-  CATEGORY_IS_NOT_FOUND,
 } from 'src/common/common.constants';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Restaurant } from './entities/restaurant.entity';
-import { Category } from '../category/entity/category.entity';
+import { mockRepo } from 'src/common/common.tools';
 import { MockReposetory } from 'src/common/common.type';
 import { User } from 'src/users/entities/user.entity';
-import { mockRepo } from 'src/common/common.tools';
 import { ILike } from 'typeorm';
+import { Category } from '../category/entity/category.entity';
+import { Restaurant } from './entities/restaurant.entity';
+import { RestaurantService } from './restaurant.service';
 
 describe('Restaurant Service', () => {
   let service: RestaurantService;

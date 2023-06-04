@@ -1,15 +1,15 @@
 import {
-  ObjectType,
   Field,
   InputType,
+  ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
+import { compare, hash } from 'bcrypt';
 import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entities';
-import { Entity, Column, BeforeInsert, BeforeUpdate, OneToMany } from 'typeorm';
-import { hash, compare } from 'bcrypt';
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 
 export enum UserRole {
   Client = 'Client',

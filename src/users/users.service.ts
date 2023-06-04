@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { CreateAccountInput, CreateAccountOutput } from './dto/create-user.dto';
-import { LoginInput, LoginOutput } from './dto/Login.dto';
+import { SUCCESSFUL_MESSAGE } from 'src/common/common.constants';
 import { JwtService } from 'src/jwt/jwt.service';
+import { MailService } from 'src/mail/mail.service';
+import { Repository } from 'typeorm';
+import { LoginInput, LoginOutput } from './dto/Login.dto';
+import { CreateAccountInput, CreateAccountOutput } from './dto/create-user.dto';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
-import { Verification } from './entities/verification.entity';
 import {
   EmailVerificationInput,
   EmailVerificationOutput,
 } from './dto/email-verification.dto';
-import { MailService } from 'src/mail/mail.service';
-import { SUCCESSFUL_MESSAGE } from 'src/common/common.constants';
+import { User } from './entities/user.entity';
+import { Verification } from './entities/verification.entity';
 
 @Injectable()
 export class UsersService {

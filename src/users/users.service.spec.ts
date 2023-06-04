@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User, UserRole } from './entities/user.entity';
-import { Verification } from './entities/verification.entity';
+import { mockJWTService, mockRepo } from 'src/common/common.tools';
+import { MockReposetory } from 'src/common/common.type';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
-import { MockReposetory } from 'src/common/common.type';
-import { mockJWTService, mockRepo } from 'src/common/common.tools';
+import { User, UserRole } from './entities/user.entity';
+import { Verification } from './entities/verification.entity';
+import { UsersService } from './users.service';
 
 const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),

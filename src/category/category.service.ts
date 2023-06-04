@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { AllCategoriesOutput } from './dto/all-categories.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
-import { Repository } from 'typeorm';
-import { Category } from './entity/category.entity';
-import { CategoryInput, CategoryOutput } from './dto/category.dto';
 import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constants';
 import { paginate, totalPages } from 'src/common/common.tools';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { Repository } from 'typeorm';
+import { AllCategoriesOutput } from './dto/all-categories.dto';
+import { CategoryInput, CategoryOutput } from './dto/category.dto';
+import { Category } from './entity/category.entity';
 
 @Injectable()
 export class CategoryService {

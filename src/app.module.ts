@@ -1,32 +1,32 @@
+import { ApolloDriver } from '@nestjs/apollo';
 import {
   MiddlewareConsumer,
   Module,
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '@nestjs/apollo';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as joi from 'joi';
 import { envValidationSchema } from 'src/common/envValidationSchema';
-import { UsersModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
-import { User } from './users/entities/user.entity';
-import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
-import { Verification } from './users/entities/verification.entity';
-import { MailModule } from './mail/mail.module';
-import { RestaurantModule } from './restaurants/restaurant.module';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
-import { Category } from './category/entity/category.entity';
 import { CategoryModule } from './category/category.module';
+import { Category } from './category/entity/category.entity';
+import { CommonModule } from './common/common.module';
 import { DishesModule } from './dishes/dishes.module';
 import { Dish } from './dishes/entities/dish.entity';
-import { OrdersModule } from './orders/orders.module';
-import { Order } from './orders/entities/order.entity';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { JwtModule } from './jwt/jwt.module';
+import { MailModule } from './mail/mail.module';
 import { OrderItem } from './orders/entities/order-item.entity';
+import { Order } from './orders/entities/order.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { RestaurantModule } from './restaurants/restaurant.module';
+import { User } from './users/entities/user.entity';
+import { Verification } from './users/entities/verification.entity';
+import { UsersModule } from './users/users.module';
 
 export const entities = [
   User,

@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CoreOutput } from 'src/common/dto/output.dto';
 import { NULLABLE } from 'src/common/common.constants';
+import { CoreOutput } from 'src/common/dto/output.dto';
 import { OrderItemOption } from '../entities/order-item.entity';
 
 @InputType()

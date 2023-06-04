@@ -1,13 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule, entities } from './../src/app.module';
-import { DataSource, Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Verification } from 'src/users/entities/verification.entity';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import * as JWT from 'jsonwebtoken';
 import { JWT_TOKEN_NAME_IN_REQ_HEADER } from 'src/common/common.constants';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { Verification } from 'src/users/entities/verification.entity';
+import * as request from 'supertest';
+import { DataSource, Repository } from 'typeorm';
+import { AppModule, entities } from './../src/app.module';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({

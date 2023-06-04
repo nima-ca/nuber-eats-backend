@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { MailModuleOptions } from './mail.interface';
-import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
