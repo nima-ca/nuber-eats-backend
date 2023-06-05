@@ -127,7 +127,6 @@ export class OrdersService {
         },
       });
       if (!order) return ORDER_IS_NOT_FOUND;
-      console.log(order);
 
       return {
         ok: true,

@@ -12,6 +12,7 @@ import { CreateOrderInput } from './dto/create-order.dto';
 import { User, UserRole } from 'src/users/entities/user.entity';
 import {
   DISH_IS_NOT_FOUND,
+  ORDER_IS_NOT_FOUND,
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
 } from 'src/common/common.constants';
@@ -233,6 +234,39 @@ describe('Orders Service', () => {
           status: OrderStatus.Pending,
           customer: { id: mockedUser.id },
         },
+      });
+    });
+  });
+
+  describe('Get Order By Id', () => {
+    const MOCKED_ORDER_ID = 1;
+    it('should fail on error', async () => {
+      orderRepo.findOne = jest.fn().mockRejectedValue(new Error());
+
+      const result = await service.getOrderById(mockedUser, MOCKED_ORDER_ID);
+
+      expect(result.ok).toBe(false);
+    });
+
+    it('should fail if no order is found', async () => {
+      orderRepo.findOne = jest.fn().mockReturnValue(null);
+      const result = await service.getOrderById(mockedUser, MOCKED_ORDER_ID);
+
+      expect(orderRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(ORDER_IS_NOT_FOUND);
+    });
+
+    it('should return order if the order is found based on user role', async () => {
+      const MOCKED_ORDER = { id: 1 };
+      mockedUser.role = UserRole.Client;
+      orderRepo.findOne = jest.fn().mockReturnValue(MOCKED_ORDER);
+
+      const result = await service.getOrderById(mockedUser, MOCKED_ORDER_ID);
+
+      expect(result).toEqual({ ok: true, order: MOCKED_ORDER });
+      expect(orderRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(orderRepo.findOne).toHaveBeenCalledWith({
+        where: { id: MOCKED_ORDER_ID, customer: { id: mockedUser.id } },
       });
     });
   });
