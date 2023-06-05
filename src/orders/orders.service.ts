@@ -87,6 +87,7 @@ export class OrdersService {
       );
       return SUCCESSFUL_MESSAGE;
     } catch (error) {
+      console.log(error);
       return { ok: false, error };
     }
   }

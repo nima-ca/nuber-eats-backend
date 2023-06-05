@@ -6,7 +6,7 @@ import {
   SUCCESSFUL_MESSAGE,
 } from 'src/common/common.constants';
 import { mockRepo } from 'src/common/common.tools';
-import { MockReposetory } from 'src/common/common.type';
+import { MockRepository } from 'src/common/common.type';
 import { User } from 'src/users/entities/user.entity';
 import { ILike } from 'typeorm';
 import { Category } from '../category/entity/category.entity';
@@ -15,8 +15,8 @@ import { RestaurantService } from './restaurant.service';
 
 describe('Restaurant Service', () => {
   let service: RestaurantService;
-  let restaurantRepo: MockReposetory<Restaurant>;
-  let categoryRepo: MockReposetory<Category>;
+  let restaurantRepo: MockRepository<Restaurant>;
+  let categoryRepo: MockRepository<Category>;
 
   const mockedUser = new User();
   mockedUser.id = 1;
@@ -44,7 +44,7 @@ describe('Restaurant Service', () => {
     categoryRepo = module.get(getRepositoryToken(Category));
   });
 
-  it('should be defind', () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 

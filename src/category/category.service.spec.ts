@@ -2,15 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CATEGORY_IS_NOT_FOUND } from 'src/common/common.constants';
 import { mockRepo } from 'src/common/common.tools';
-import { MockReposetory } from 'src/common/common.type';
+import { MockRepository } from 'src/common/common.type';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { CategoryService } from './category.service';
 import { Category } from './entity/category.entity';
 
 describe('Category Service', () => {
   let service: CategoryService;
-  let restaurantRepo: MockReposetory<Restaurant>;
-  let categoryRepo: MockReposetory<Category>;
+  let restaurantRepo: MockRepository<Restaurant>;
+  let categoryRepo: MockRepository<Category>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

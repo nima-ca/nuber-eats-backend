@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { mockJWTService, mockRepo } from 'src/common/common.tools';
-import { MockReposetory } from 'src/common/common.type';
+import { MockRepository } from 'src/common/common.type';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
 import { User, UserRole } from './entities/user.entity';
@@ -14,8 +14,8 @@ const mockMailService = () => ({
 
 describe('UsersService', () => {
   let userService: UsersService;
-  let usersRepo: MockReposetory<User>;
-  let verificationRepo: MockReposetory<Verification>;
+  let usersRepo: MockRepository<User>;
+  let verificationRepo: MockRepository<Verification>;
   let mailService: MailService;
   let jwtService: JwtService;
 
