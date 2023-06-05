@@ -26,4 +26,9 @@ export const ORDER_IS_NOT_FOUND: CoreOutput = {
   error: 'Order is not found!',
 };
 
+export const NOT_ALLOWED_ACTION: CoreOutput = {
+  ok: false,
+  error: 'you are not allowed to perform this action',
+};
+
 export const NULLABLE = { nullable: true };

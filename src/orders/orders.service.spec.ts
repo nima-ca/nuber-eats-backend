@@ -1,22 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Category } from 'src/category/entity/category.entity';
-import { mockRepo } from 'src/common/common.tools';
-import { MockRepository } from 'src/common/common.type';
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
-import { OrdersService } from './orders.service';
-import { Dish } from 'src/dishes/entities/dish.entity';
-import { OrderItem } from './entities/order-item.entity';
-import { Order, OrderStatus } from './entities/order.entity';
-import { CreateOrderInput } from './dto/create-order.dto';
-import { User, UserRole } from 'src/users/entities/user.entity';
 import {
   DISH_IS_NOT_FOUND,
+  NOT_ALLOWED_ACTION,
   ORDER_IS_NOT_FOUND,
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
 } from 'src/common/common.constants';
-import { GetOrdersOutput } from './dto/get-order.dto';
+import { mockRepo } from 'src/common/common.tools';
+import { MockRepository } from 'src/common/common.type';
+import { Dish } from 'src/dishes/entities/dish.entity';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { User, UserRole } from 'src/users/entities/user.entity';
+import { CreateOrderInput } from './dto/create-order.dto';
+import { UpdateOrderInput } from './dto/update-order.dto';
+import { OrderItem } from './entities/order-item.entity';
+import { Order, OrderStatus } from './entities/order.entity';
+import { OrdersService } from './orders.service';
 
 describe('Orders Service', () => {
   let service: OrdersService;
@@ -268,6 +268,107 @@ describe('Orders Service', () => {
       expect(orderRepo.findOne).toHaveBeenCalledWith({
         where: { id: MOCKED_ORDER_ID, customer: { id: mockedUser.id } },
       });
+    });
+  });
+
+  describe('Update Order', () => {
+    const BASE_MOCKED_UPDATE_ARGS: UpdateOrderInput = {
+      id: 1,
+      status: OrderStatus.Cooking,
+    };
+
+    const GET_ORDER_BY_ID_SUCCESS_RESPONSE = { ok: true };
+
+    it('should fail on error', async () => {
+      service.getOrderById = jest.fn().mockRejectedValue(new Error());
+
+      const result = await service.updateOrder(
+        mockedUser,
+        BASE_MOCKED_UPDATE_ARGS,
+      );
+
+      expect(result.ok).toBe(false);
+    });
+
+    it('should fail if status is pending', async () => {
+      const MOCKED_UPDATE_ARGS = {
+        ...BASE_MOCKED_UPDATE_ARGS,
+        status: OrderStatus.Pending,
+      };
+      const result = await service.updateOrder(mockedUser, MOCKED_UPDATE_ARGS);
+
+      expect(result).toEqual(NOT_ALLOWED_ACTION);
+    });
+
+    it('should fail if the order is not found', async () => {
+      service.getOrderById = jest.fn().mockReturnValue({ ok: false });
+
+      const result = await service.updateOrder(
+        mockedUser,
+        BASE_MOCKED_UPDATE_ARGS,
+      );
+
+      expect(result).toEqual(ORDER_IS_NOT_FOUND);
+    });
+
+    it('should fail if user role is Owner but the status is not Cooked or Cooking', async () => {
+      mockedUser.role = UserRole.Owner;
+      service.getOrderById = jest
+        .fn()
+        .mockReturnValue(GET_ORDER_BY_ID_SUCCESS_RESPONSE);
+      const MOCKED_UPDATE_ARGS: UpdateOrderInput = {
+        id: 1,
+        status: OrderStatus.Delivered,
+      };
+      const result = await service.updateOrder(mockedUser, MOCKED_UPDATE_ARGS);
+
+      expect(result).toEqual(NOT_ALLOWED_ACTION);
+    });
+
+    it('should update order if the user role is Owner and status is Cooked or Cooking', async () => {
+      mockedUser.role = UserRole.Owner;
+      service.getOrderById = jest
+        .fn()
+        .mockReturnValue(GET_ORDER_BY_ID_SUCCESS_RESPONSE);
+      const MOCKED_UPDATE_ARGS: UpdateOrderInput = {
+        id: 1,
+        status: OrderStatus.Cooked,
+      };
+      const result = await service.updateOrder(mockedUser, MOCKED_UPDATE_ARGS);
+
+      expect(orderRepo.save).toHaveBeenCalledTimes(1);
+      expect(orderRepo.save).toHaveBeenCalledWith([MOCKED_UPDATE_ARGS]);
+      expect(result).toEqual(SUCCESSFUL_MESSAGE);
+    });
+
+    it('should fail if user role is Delivery but the status is not Delivered or PickedUp', async () => {
+      mockedUser.role = UserRole.Delivery;
+      service.getOrderById = jest
+        .fn()
+        .mockReturnValue(GET_ORDER_BY_ID_SUCCESS_RESPONSE);
+      const MOCKED_UPDATE_ARGS: UpdateOrderInput = {
+        id: 1,
+        status: OrderStatus.Cooked,
+      };
+      const result = await service.updateOrder(mockedUser, MOCKED_UPDATE_ARGS);
+
+      expect(result).toEqual(NOT_ALLOWED_ACTION);
+    });
+
+    it('should update order if the user role is Delivery and status is Delivered or PickedUp', async () => {
+      mockedUser.role = UserRole.Delivery;
+      service.getOrderById = jest
+        .fn()
+        .mockReturnValue(GET_ORDER_BY_ID_SUCCESS_RESPONSE);
+      const MOCKED_UPDATE_ARGS: UpdateOrderInput = {
+        id: 1,
+        status: OrderStatus.Delivered,
+      };
+      const result = await service.updateOrder(mockedUser, MOCKED_UPDATE_ARGS);
+
+      expect(orderRepo.save).toHaveBeenCalledTimes(1);
+      expect(orderRepo.save).toHaveBeenCalledWith([MOCKED_UPDATE_ARGS]);
+      expect(result).toEqual(SUCCESSFUL_MESSAGE);
     });
   });
 });

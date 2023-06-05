@@ -8,7 +8,11 @@ import {
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
-import { ROLE_METADATA_KEY, USER_KEY } from 'src/common/common.constants';
+import {
+  NOT_ALLOWED_ACTION,
+  ROLE_METADATA_KEY,
+  USER_KEY,
+} from 'src/common/common.constants';
 import { AllowedRoles } from 'src/common/common.type';
 
 @Injectable()
@@ -35,9 +39,7 @@ export class AuthGuard implements CanActivate {
 
     // check if the user has access to the resolver
     if (!roles.includes(user.role))
-      throw new ForbiddenException(
-        'You are not allowed to access this action!',
-      );
+      throw new ForbiddenException(NOT_ALLOWED_ACTION.error);
 
     return true;
   }

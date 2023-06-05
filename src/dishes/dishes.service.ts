@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  NOT_ALLOWED_ACTION,
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
 } from 'src/common/common.constants';
@@ -58,8 +59,7 @@ export class DishesService {
       });
 
       if (!dish) return { ok: false, error: 'Dish is not found!' };
-      if (dish.restaurant.ownerId !== userId)
-        return { ok: false, error: 'You are not allowed to do this action!' };
+      if (dish.restaurant.ownerId !== userId) return NOT_ALLOWED_ACTION;
 
       await this.dishRepo.delete(dishId);
 
@@ -82,8 +82,7 @@ export class DishesService {
       });
 
       if (!dish) return { ok: false, error: 'Dish is not found!' };
-      if (dish.restaurant.ownerId !== userId)
-        return { ok: false, error: 'You are not allowed to do this action!' };
+      if (dish.restaurant.ownerId !== userId) return NOT_ALLOWED_ACTION;
 
       await this.dishRepo.update(dishId, editDishInput);
 

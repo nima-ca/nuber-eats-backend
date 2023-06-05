@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DISH_IS_NOT_FOUND,
+  NOT_ALLOWED_ACTION,
   ORDER_IS_NOT_FOUND,
   RESTAURANT_IS_NOT_FOUND,
   SUCCESSFUL_MESSAGE,
@@ -16,8 +17,9 @@ import {
   GetOrdersInput,
   GetOrdersOutput,
 } from './dto/get-order.dto';
+import { UpdateOrderInput, UpdateOrderOutput } from './dto/update-order.dto';
 import { OrderItem } from './entities/order-item.entity';
-import { Order } from './entities/order.entity';
+import { Order, OrderStatus } from './entities/order.entity';
 
 @Injectable()
 export class OrdersService {
@@ -132,6 +134,44 @@ export class OrdersService {
         ok: true,
         order,
       };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async updateOrder(
+    user: User,
+    { id, status }: UpdateOrderInput,
+  ): Promise<UpdateOrderOutput> {
+    try {
+      if (status === OrderStatus.Pending) return NOT_ALLOWED_ACTION;
+
+      const { ok: isOrderFound } = await this.getOrderById(user, id);
+      if (!isOrderFound) return ORDER_IS_NOT_FOUND;
+
+      if (user.role === UserRole.Owner) {
+        if (status !== OrderStatus.Cooking && status !== OrderStatus.Cooked) {
+          return NOT_ALLOWED_ACTION;
+        }
+      }
+
+      if (user.role === UserRole.Delivery) {
+        if (
+          status !== OrderStatus.Delivered &&
+          status !== OrderStatus.PickedUp
+        ) {
+          return NOT_ALLOWED_ACTION;
+        }
+      }
+
+      await this.orderRepo.save([
+        {
+          id,
+          status,
+        },
+      ]);
+
+      return SUCCESSFUL_MESSAGE;
     } catch (error) {
       return { ok: false, error };
     }
